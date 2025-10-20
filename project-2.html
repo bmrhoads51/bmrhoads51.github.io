@@ -63,7 +63,34 @@
 
       <!-- Single: Original -->
       
-      <p>The first task was to rectify an image of a planar surface taken from an angle. For this part, I took a picture of two sticky notes with phrases written on them. From an angle, they are difficult to read, as shown below: </p>
+      <p>The first task was to rectify an image of a planar surface taken from an angle.</p>
+      <p>The images below show the points chosen as the four correspondence points for each artwork. The points were obtained by estimating the locations of each point, plotting the point on the image, and then adjusting the location until the points were on the corners of the frames, which correspond to the corners of the square matrix the images will be warped to.</p>
+
+      <div class="images-row">
+        <figure class="more-width">
+          <img src="project-2-images/scene-1.png" alt="Original photo of a planar surface captured at an angle" />
+          <figcaption>Original, correspondence points, and warped images of scene 1 from different original angles. </figcaption>
+        </figure>
+      </div>
+
+      <div class="images-row">
+        <figure class="more-width">
+          <img src="project-2-images/scene-2.png" alt="Original photo of a planar surface captured at an angle" />
+          <figcaption>Original, correspondence points, and warped images of scene 2 from different original angles. </figcaption>
+        </figure>
+      </div>
+
+    </div>
+
+    <div style="height: 40px;"></div>
+
+    <!-- ======================================== -->
+    <!-- Part 2: Creative Application / Extension -->
+    <!-- ======================================== -->
+    <div class="section">
+      <h2>Part 2 - Creative Application (Exploration &amp; Extension)</h2>
+
+      <p>For this part, I took a picture of two sticky notes with phrases written on them. From an angle, they are difficult to read, as shown below. The rectified images of the two sticky notes are shown below, which clearly show the phrases written on the sticky notes. To see the accuracy of the rectified images, a bird's eye view image is shown which clearly shows the phrases on the sticky notes without any warping. There is slight deformation in the edges of the sticky notes of rectified image B, which is caused by the slight curvature in the sticky note. The process used here is a linear matrix transformation, so it cannot account for curvature in the sticky note. </p>
 
       <div class="images-row">
         <figure class="more-width">
@@ -72,7 +99,6 @@
         </figure>
       </div>
 
-      <p>The image below shows the points chosen as the four correspondence points for each sticky note. The points were obtained by estimating the locations of each point, plotting the point on the image, and then adjusting the location until the points were on the corners of the sticky notes, which correspond to the corners of the square matrix the images will be warped to. </p>
       
       <!-- Single: Correspondence overlay below -->
       <div class="images-row">
@@ -82,8 +108,7 @@
         </figure>
       </div>
 
-      <p>The rectified images of the two sticky notes are shown below, which clearly show the phrases written on the sticky notes. To see the accuracy of the rectified images, a bird's eye view image is shown which clearly shows the phrases on the sticky notes without any warping. There is slight deformation in the edges of the sticky notes of rectified image B, which is caused by the slight curvature in the sticky note. The process used here is a linear matrix transformation, so it cannot account for curvature in the sticky note. </p>
-
+      
       <!-- Three across: two rectified + bird’s-eye -->
       <h3>Rectified Results &amp; Bird’s-Eye Reference</h3>
       <div class="images-row">
@@ -101,17 +126,8 @@
         </figure>
       </div>
 
-    </div>
 
-    <div style="height: 40px;"></div>
-
-    <!-- ======================================== -->
-    <!-- Part 2: Creative Application / Extension -->
-    <!-- ======================================== -->
-    <div class="section">
-      <h2>Part 2 - Creative Application (Exploration &amp; Extension)</h2>
-
-      <p>For this part of the project, I decided to use images from Google Maps of the Ole Miss football field. I used streetview from the middle of the field and took eight screenshots facing north, south, east, west, northeast, northwest, southeast, and southwest. The goal was then to reconstruct the bird's eye view of the field using the images from the streetview. Below are the screenshots used. </p>
+      <p>Also for this part of the project, I decided to use images from Google Maps of the Ole Miss football field. I used streetview from the middle of the field and took eight screenshots facing north, south, east, west, northeast, northwest, southeast, and southwest. The goal was then to reconstruct the bird's eye view of the field using the images from the streetview. Below are the screenshots used. </p>
 
       <!-- 3x3 grid: outer eight field photos (pre-cropped files), center blank/title -->
       <h3>Field Images (Overview)</h3>
@@ -282,24 +298,31 @@
 
       <div class="images-row">
         <figure class="more-width">
-          <img src="project-2-images/correspondence_pts.png" alt="Dart and Kiffin images side by side with selected correspondences" />
+          <img src="project-2-images/3-pts.png" alt="3 points" />
         </figure>
       </div>
+      <div class="images-row">
+        <figure class="more-width">
+          <img src="project-2-images/3-morphed.png" alt="3 points" />
+        </figure>
+      </div>
+
       <p>Next, the average locations of each correspondence points over the two images were obtained, and from these points a triangular mesh was created, which is shown on each of the pictures below. </p>
 
       <div class="images-row">
         <figure class="more-width">
-          <img src="project-2-images/triangular_meshes.png" alt="Dart and Kiffin with triangle mesh from averaged correspondences" />
+          <img src="project-2-images/7-pts.png" alt="3 points" />
         </figure>
       </div>
-      <p>Using the triangular mesh linear warping and the thin-plate spline warping method, which is expected to be more smooth, the two original images were morphed to the average triangular mesh, and then the two images were averaged together. The results using each method are shown below for a combination of Jaxson Dart and Lane Kiffin. </p>
-
       <div class="images-row">
         <figure class="more-width">
-          <img src="project-2-images/warp_comparison.png" alt="Side-by-side average of the two warped images: Triangular mesh (left) vs TPS (right)" />
-          <figcaption>Combined images — Triangular Mesh (left) vs TPS (right).</figcaption>
+          <img src="project-2-images/7-morphed.png" alt="3 points" />
         </figure>
       </div>
+      
+      
+      <p>Using the triangular mesh linear warping and the thin-plate spline warping method, which is expected to be more smooth, the two original images were morphed to the average triangular mesh, and then the two images were averaged together. The results using each method are shown below for a combination of Jaxson Dart and Lane Kiffin. </p>
+
       <p>For this example, it is difficult to see any difference between the two methods. However, both methods did a very good job combining the facial features of the two faces. The final face is pretty smooth and is a clear combination of Jaxson Dart and Lane Kiffin. However, the features around the face, like the ears, hair, and neck, are not very clean This is because there were not many correspondence points outside of the face, so the triangular mesh warping does not work as well on these parts of the image. Adding additional correspondence points to the neck, hair, and forehead would help improve the bad parts of the image. </p>
     </div>
 
