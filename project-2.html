@@ -298,11 +298,12 @@
     <div class="section">
       <h2>Part 3 - Warping Comparison (Triangular Mesh vs Thin-Plate Spline)</h2>
 
-      <p>For the triangular mesh warping, I used images of Jaxson Dart (https://www.nfl.com/prospects/jaxson-dart/32004441-5273-5504-d6f2-f2d3f25131e8) and Lane Kiffin (https://olemisssports.com/staff-directory/lane-kiffin/634) to combine them into a single person. The first step was to choose correspodence points for both images, which included inner and outer eyes, upper and lower ears, mouth, nose, and chin.</p>
-
+      <p></p>
+      <p>To warp the images of the numbers from a poorly written number to a more neatly written number, I chose multiple correspondence points on each image. Morphing the 3 image did much better than the 7 because 3a was not as poorly written as 7a, nor was it as drastically different than 7a was from 7b. </p>
+      <p>It was not always clear where te points should be placed, but I made my best estimates. For example, in figure 7a, there is no clear distinction between the horizontal line in the 7 and the diagonal part. Therefore, I had to esimate where that point should be incorder to get a somewhat similar change in angle instead of a round section. Additionally, the bottom part of the 7 did not get thicker like 7b. This is because I did not specify points all along the sides of the lines, just at the corners, so the interpolation has no idea the lower half of the seven should be getting much thicker. </p>
       <div class="images-row">
         <figure class="more-width">
-          <img src="project-2-images/3-pts.png" alt="3 points" />
+          <img src="project-2-images/3_pts.png" alt="3 points" />
         </figure>
       </div>
       <div class="images-row">
@@ -311,8 +312,8 @@
         </figure>
       </div>
 
-      <p>Next, the average locations of each correspondence points over the two images were obtained, and from these points a triangular mesh was created, which is shown on each of the pictures below. </p>
-
+      <p></p>
+      
       <div class="images-row">
         <figure class="more-width">
           <img src="project-2-images/7-pts.png" alt="3 points" />
@@ -323,11 +324,9 @@
           <img src="project-2-images/7-morphed.png" alt="3 points" />
         </figure>
       </div>
-      
-      
-      <p>Using the triangular mesh linear warping and the thin-plate spline warping method, which is expected to be more smooth, the two original images were morphed to the average triangular mesh, and then the two images were averaged together. The results using each method are shown below for a combination of Jaxson Dart and Lane Kiffin. </p>
 
-      <p>For this example, it is difficult to see any difference between the two methods. However, both methods did a very good job combining the facial features of the two faces. The final face is pretty smooth and is a clear combination of Jaxson Dart and Lane Kiffin. However, the features around the face, like the ears, hair, and neck, are not very clean This is because there were not many correspondence points outside of the face, so the triangular mesh warping does not work as well on these parts of the image. Adding additional correspondence points to the neck, hair, and forehead would help improve the bad parts of the image. </p>
+      <p></p>
+      
     </div>
 
     <div style="height: 40px;"></div>
