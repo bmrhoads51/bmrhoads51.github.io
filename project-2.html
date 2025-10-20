@@ -64,21 +64,24 @@
       <!-- Single: Original -->
       
       <p>The first task was to rectify an image of a planar surface taken from an angle.</p>
-      <p>The images below show the points chosen as the four correspondence points for each artwork. The points were obtained by estimating the locations of each point, plotting the point on the image, and then adjusting the location until the points were on the corners of the frames, which correspond to the corners of the square matrix the images will be warped to.</p>
+      <p>The images below show the original photo taken from different angles, and for each photo, four correspondence points chosen for each photo are shown The points were obtained by estimating the locations of each point, plotting the point on the image, and then adjusting the location until the points were on the corners of the frames, which correspond to the corners of the square matrix the images will be warped to.</p>
 
       <div class="images-row">
         <figure class="more-width">
           <img src="project-2-images/scene-1.png" alt="Original photo of a planar surface captured at an angle" />
-          <figcaption>Original, correspondence points, and warped images of scene 1 from different original angles. </figcaption>
+          <figcaption>Original, correspondence points, and rectified images of scene 1 from different original angles. </figcaption>
         </figure>
       </div>
 
       <div class="images-row">
         <figure class="more-width">
           <img src="project-2-images/scene-2.png" alt="Original photo of a planar surface captured at an angle" />
-          <figcaption>Original, correspondence points, and warped images of scene 2 from different original angles. </figcaption>
+          <figcaption>Original, correspondence points, and rectified images of scene 2 from different original angles. </figcaption>
         </figure>
       </div>
+
+      <p>To rectify the images, finding the inverse linear transformation from the correspondence points to the corner points of a matrix is done using linear algebra. The homography matrix, H, is found which tranforms the square matrix to the warped matrix using Ah=b, and then the inverse of h is used to transform the warped image back into the square or rectangular matrix. </p>
+
 
     </div>
 
@@ -127,6 +130,7 @@
       </div>
 
 
+      <p></p>
       <p>Also for this part of the project, I decided to use images from Google Maps of the Ole Miss football field. I used streetview from the middle of the field and took eight screenshots facing north, south, east, west, northeast, northwest, southeast, and southwest. The goal was then to reconstruct the bird's eye view of the field using the images from the streetview. Below are the screenshots used. </p>
 
       <!-- 3x3 grid: outer eight field photos (pre-cropped files), center blank/title -->
