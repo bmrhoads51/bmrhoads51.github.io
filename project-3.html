@@ -32,28 +32,25 @@
         }
 
         /* Default image size */
-        .images-row img {
+        .images-row img,
+        figure img {
             width: 70%;
             height: auto;
             border-radius: 6px;
         }
 
-        /* Wide image for regression loss */
+        /* Larger width for regression loss (no longer used) */
         .wide {
             width: 90% !important;
         }
 
-        /* Half-size images for Part 2 and Part 3 */
+        /* Part 2 & Part 3 images increased by 50%: now 75% width */
         .half {
-            width: 50% !important;
-        }
-
-        figure img {
-            border-radius: 6px;
+            width: 75% !important;
         }
 
         figure figcaption {
-            width: 70%;
+            width: 80%;
             text-align: center;
             font-size: 0.95em;
             color: #555;
@@ -79,17 +76,16 @@
 
     <p>For this project, I used a YOLO version 8 object detection network with a YOLO version 8 backbones from COCO. I trained this model for 10 epochs on the training dataset of 1000 images, and the training loss for the classification (banana or background binary classification problem) and regression (bounding box coordinates regression) branches of the model are shown below. Both losses decrease steadily all throughout training, showing accurate representation of the training data and indicating there is no overfitting or underfitting.</p>
 
-    <!-- Side-by-side training loss images -->
-    <div class="images-row">
-        <figure>
-            <img src="project-3-images/1.1.png" alt="train_classification_loss">
-            <figcaption>Cross entropy loss of the predicted classes of each bounding box with the true classes.</figcaption>
-        </figure>
-        <figure>
-            <img class="wide" src="project-3-images/1.2.png" alt="train_regression_loss">
-            <figcaption>Loss of bounding box location and dimension predictions. Huber loss was calculated between true and predicted x and y coordinates of the top left and bottom right corners of the bounding boxes to reduce sensitivity to outliers, and the average loss over the four values was calculated. A mask is used so that only bounding boxes which should be classified as bananas are used in the loss calculation.</figcaption>
-        </figure>
-    </div>
+    <!-- STACKED TRAINING LOSS IMAGES -->
+    <figure>
+        <img src="project-3-images/1.1.png" alt="train_classification_loss">
+        <figcaption>Cross entropy loss of the predicted classes of each bounding box with the true classes.</figcaption>
+    </figure>
+
+    <figure>
+        <img src="project-3-images/1.2.png" alt="train_regression_loss">
+        <figcaption>Loss of bounding box location and dimension predictions. Huber loss was calculated between true and predicted x and y coordinates of the top left and bottom right corners of the bounding boxes to reduce sensitivity to outliers, and the average loss over the four values was calculated. A mask is used so that only bounding boxes which should be classified as bananas are used in the loss calculation.</figcaption>
+    </figure>
 
     <h3>Results: Testing model on images from validation dataset</h3>
 
@@ -114,7 +110,6 @@
 
     <p>Below are some cases of images of bananas I took and tried to locate them with my model. The first part of the images that was challenging was that the bananas were very ripe, so they had lots of brown spots on them, making them much different than the color of the bright yellow bananas in the dataset. Additionally, the lighting is darker in some images and there are a few images where the banana is at a different angle and occluded by other objects.</p>
 
-    <!-- 2 rows of 3 images each -->
     <div class="images-row">
         <figure><img src="project-3-images/1.4a.png"></figure>
         <figure><img src="project-3-images/1.4b.png"></figure>
@@ -201,7 +196,7 @@
         <img class="half" src="project-3-images/3.6.png">
     </figure>
 
-    <p>To predict the HOI for this image better, I told the VLM to consider sub-objects and what HOI there is with sub-objects as well as the main object. The result is that the HOI with the liquid was given instead of just the glass. While <drink  liquid> was not predicted, the HOIs that were provided regarding the liquid were legitimate HOIs.</p>
+    <p>To predict the HOI for this image better, I told the VLM to consider sub-objects and what HOI there is with sub-objects as well as the main object. The result is that the HOI with the liquid was given. While drink the liquid was not predicted, the ones that were provided regarding the liquid were legitimate HOIs.</p>
 
     <figure>
         <img class="half" src="project-3-images/3.7.png">
