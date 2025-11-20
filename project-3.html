@@ -2,18 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Project 1</title>
+    <title>Project 3</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body { 
             font-family: Arial, sans-serif; 
             margin: 20px; 
-            /* Center the container horizontally */
             display: flex; 
             justify-content: center;
         }
         .container {
-            /* Constrain max width but allow to fill smaller windows */
             max-width: 900px;
             width: 100%;
         }
@@ -48,15 +46,151 @@
     </style>
 </head>
 <body>
-    <div class="container">
-    <a href="index.html">Go Back</a>
+<div class="container">
 
+<a href="index.html">Go Back</a>
 
-    <h1>Project 3</h1>
+<h1>Project 3</h1>
 
-    <div class="section">
-        <h2>Part 1</h2>
+<!-- ======================================================= -->
+<!-- ======================= PART 1 ========================= -->
+<!-- ======================================================= -->
+
+<div class="section">
+    <h2>Part 1: Lightweight Object Detection</h2>
+
+    <p>For this project, I used a YOLO version 8 object detection network with a YOLO version 8 backbones from COCO. I trained this model for 10 epochs on the training dataset of 1000 images, and the training loss for the classification (banana or background binary classification problem) and regression (bounding box coordinates regression) branches of the model are shown below. Both losses decrease steadily all throughout training, showing accurate representation of the training data and indicating there is no overfitting or underfitting.</p>
+
+    <!-- Side-by-side training loss images -->
+    <div class="images-row">
+        <figure>
+            <img src="project-3-images/1.1.png" alt="train_classification_loss">
+            <figcaption>Cross entropy loss of the predicted classes of each bounding box with the true classes.</figcaption>
+        </figure>
+        <figure>
+            <img src="project-3-images/1.2.png" alt="train_regression_loss">
+            <figcaption>Loss of bounding box location and dimension predictions. Huber loss was calculated between true and predicted x and y coordinates of the top left and bottom right corners of the bounding boxes to reduce sensitivity to outliers, and the average loss over the four values was calculated. A mask is used so that only bounding boxes which should be classified as bananas are used in the loss calculation.</figcaption>
+        </figure>
     </div>
+
+    <h3>Results: Testing model on images from validation dataset</h3>
+
+    <p>Below are some images from the validation dataset with the predicted bounding box(es) for the bananas. For every validation image shown, the banana was successfully detected. In a few cases, however, there are one or two additional boxes that are predicted in the wrong locations. While these predictions are wrong, they are not the most confidently predicted locations for the bananas. Therefore, the model is still very good at predicting the bananas in this dataset.</p>
+
+    <!-- 2 rows of 3 images each -->
+    <div class="images-row">
+        <figure><img src="project-3-images/1.3a.png"></figure>
+        <figure><img src="project-3-images/1.3b.png"></figure>
+        <figure><img src="project-3-images/1.3c.png"></figure>
     </div>
+    <div class="images-row">
+        <figure><img src="project-3-images/1.3d.png"></figure>
+        <figure><img src="project-3-images/1.3e.png"></figure>
+        <figure><img src="project-3-images/1.3f.png"></figure>
+    </div>
+    <figcaption style="text-align:center; margin-bottom:20px;">
+        Predictions of bounding box(es) for bananas in the validation dataset. The YOLO model is successful in locating the banana in each validation image.
+    </figcaption>
+
+    <h3>Failure cases from my own pictures</h3>
+
+    <p>Below are some cases of images of bananas I took and tried to locate them with my model. The first part of the images that was challenging was that the bananas were very ripe, so they had lots of brown spots on them, making them much different than the color of the bright yellow bananas in the dataset. Additionally, the lighting is darker in some images and there are a few images where the banana is at a different angle and occluded by other objects.</p>
+
+    <!-- 2 rows of 3 images each -->
+    <div class="images-row">
+        <figure><img src="project-3-images/1.4a.png"></figure>
+        <figure><img src="project-3-images/1.4b.png"></figure>
+        <figure><img src="project-3-images/1.4c.png"></figure>
+    </div>
+    <div class="images-row">
+        <figure><img src="project-3-images/1.4d.png"></figure>
+        <figure><img src="project-3-images/1.4e.png"></figure>
+        <figure><img src="project-3-images/1.4f.png"></figure>
+    </div>
+    <figcaption style="text-align:center; margin-bottom:20px;">
+        Pictures of bananas I took, all of which are too different from the training data for the model to locate the bananas.
+    </figcaption>
+
+    <p>One thing I noticed from looking at the parts of the image the model thought was a banana was that the model misidentified something with similar curvature to the banana in the training data. This suggests that the model did not learn very much about the color or texture of the bananas in the training data, just the structure. Then, when the color and shape are different in my pictures, the model does not recognize them as bananas. Additionally, there are images where the bananas cannot be fully seen, or they are taken from different angles, causing the shape of the banana to be much different. It is also very difficult for the model to find the bananas in these images. Overall, it would help a great deal if there were more variation in the training data, as it appears the model has overfit to the specific banana overlaid on all the training images, making it difficult to identify bananas that were any different.</p>
+
+</div>
+
+
+<!-- ======================================================= -->
+<!-- ======================= PART 2 ========================= -->
+<!-- ======================================================= -->
+
+<div class="section">
+    <h2>Part 2: Non-Maximum Suppression (NMS)</h2>
+
+    <p>The figures below show the implementation of NMS using a tensorflow built-in function as well as from scratch. There was no difference between the custom NMS function and tensorflow built-in NMS function. All methods worked well with this model.</p>
+
+    <!-- stacked images -->
+    <figure>
+        <img src="project-3-images/2.1a.png">
+    </figure>
+    <figure>
+        <img src="project-3-images/2.2.png">
+        <figcaption>Bounding box prediction before NMS and using NMS from tensorflow function and a function built from scratch.</figcaption>
+    </figure>
+
+    <p>Based on the images above, the model is most likely not predicting many bounding boxes as bananas, which is why NMS seems to not be necessary in most cases. Since there are not many bounding box predictions with high confidence, the NMS algorithm does not need to filter many out. This is not a limitation of the NMS algorithm, but it is a limitation of the model used, as it would be better to propose more locations as possible bananas and let the NMS algorithm filter them to find the best option(s).</p>
+
+</div>
+
+
+<!-- ======================================================= -->
+<!-- ======================= PART 3 ========================= -->
+<!-- ======================================================= -->
+
+<div class="section">
+    <h2>Part 3: Human-Object Interaction (HOI) Analysis Using VLMs</h2>
+
+    <p>I used ChatGPT 5.1 to give me the human-object interactions of many images from the HICO-DET dataset. This VLM did very well and gave many accurate predictions for several different HOI positive cases. I gave the following prompt before uploading images to the VLM:</p>
+
+    <figure>
+        <img src="project-3-images/3.1.png">
+        <figcaption>Initial instructions to ChatGPT 5.1 for HOI</figcaption>
+    </figure>
+
+    <p>Next, I show an example of accurate predictions of the HOI for a motorcycle. The VLM predicted the many possible things one can do with the motorcycle. However, the &lt;press foot peg&gt; prediction would probably not be possible in this image, as that is only when the motorcycle is not moving. Since the motorcycle is being ridden, you would not press the foot peg down or the motorcycle would crash. It seems the ChatGPT VLM resorts to predicting extra HOIs, even if some are less likely to be correct.</p>
+
+    <figure>
+        <img src="project-3-images/3.2.png">
+    </figure>
+
+    <p>The next image was also accurately predicted; however, there was a glitch of some sort, &lt;br&gt;. This is a meaningless prediction, but the other predictions are accurate.</p>
+
+    <figure>
+        <img src="project-3-images/3.3.png">
+    </figure>
+
+    <p>Next, an image of someone holding a toothpick over carrots was used. There is no knife in the picture (just a peeler on the side), the VLM said an HOI was to cut the carrots with a knife. While the image is misleading, the VLM was tricked since you cannot cut carrots with a knife.</p>
+
+    <figure>
+        <img src="project-3-images/3.4.png">
+    </figure>
+
+    <p>Last, the image below of a plane on top of another plane is pretty difficult to assign HOI to. The VLM does a good job of giving an HOI that is close to the ground truth label.</p>
+
+    <figure>
+        <img src="project-3-images/3.5.png">
+    </figure>
+
+    <p>In the images above, the VLM does a good job of predicting HOI. However, in the example below, the VLM makes no HOI predictions for the liquid in the glass, just about the glass.</p>
+
+    <figure>
+        <img src="project-3-images/3.6.png">
+    </figure>
+
+    <p>To predict the HOI for this image better, I told the VLM to consider sub-objects and what HOI there is with sub-objects as well as the main object. The result is that the HOI with the liquid was given. While drink the liquid was not predicted, the ones that were provided regarding the liquid were legitimate HOIs.</p>
+
+    <figure>
+        <img src="project-3-images/3.7.png">
+    </figure>
+
+</div>
+
+</div>
 </body>
 </html>
