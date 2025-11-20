@@ -16,6 +16,7 @@
             width: 100%;
         }
         .section { margin-bottom: 40px; }
+
         .images-row {
             display: flex;
             gap: 20px;
@@ -29,19 +30,36 @@
             flex-direction: column;
             align-items: center;
         }
-        .images-row figure img {
+
+        /* Default image size */
+        .images-row img {
             width: 70%;
             height: auto;
             border-radius: 6px;
-            display: block;
         }
-        .images-row figcaption {
+
+        /* Wide image for regression loss */
+        .wide {
+            width: 90% !important;
+        }
+
+        /* Half-size images for Part 2 and Part 3 */
+        .half {
+            width: 50% !important;
+        }
+
+        figure img {
+            border-radius: 6px;
+        }
+
+        figure figcaption {
             width: 70%;
             text-align: center;
             font-size: 0.95em;
             color: #555;
             margin-top: 5px;
         }
+
         h1, h2, h3, h4 { margin-top: 0; }
     </style>
 </head>
@@ -68,7 +86,7 @@
             <figcaption>Cross entropy loss of the predicted classes of each bounding box with the true classes.</figcaption>
         </figure>
         <figure>
-            <img src="project-3-images/1.2.png" alt="train_regression_loss">
+            <img class="wide" src="project-3-images/1.2.png" alt="train_regression_loss">
             <figcaption>Loss of bounding box location and dimension predictions. Huber loss was calculated between true and predicted x and y coordinates of the top left and bottom right corners of the bounding boxes to reduce sensitivity to outliers, and the average loss over the four values was calculated. A mask is used so that only bounding boxes which should be classified as bananas are used in the loss calculation.</figcaption>
         </figure>
     </div>
@@ -125,12 +143,12 @@
 
     <p>The figures below show the implementation of NMS using a tensorflow built-in function as well as from scratch. There was no difference between the custom NMS function and tensorflow built-in NMS function. All methods worked well with this model.</p>
 
-    <!-- stacked images -->
     <figure>
-        <img src="project-3-images/2.1a.png">
+        <img class="half" src="project-3-images/2.1.png">
     </figure>
+
     <figure>
-        <img src="project-3-images/2.2.png">
+        <img class="half" src="project-3-images/2.2.png">
         <figcaption>Bounding box prediction before NMS and using NMS from tensorflow function and a function built from scratch.</figcaption>
     </figure>
 
@@ -149,44 +167,44 @@
     <p>I used ChatGPT 5.1 to give me the human-object interactions of many images from the HICO-DET dataset. This VLM did very well and gave many accurate predictions for several different HOI positive cases. I gave the following prompt before uploading images to the VLM:</p>
 
     <figure>
-        <img src="project-3-images/3.1.png">
+        <img class="half" src="project-3-images/3.1.png">
         <figcaption>Initial instructions to ChatGPT 5.1 for HOI</figcaption>
     </figure>
 
     <p>Next, I show an example of accurate predictions of the HOI for a motorcycle. The VLM predicted the many possible things one can do with the motorcycle. However, the &lt;press foot peg&gt; prediction would probably not be possible in this image, as that is only when the motorcycle is not moving. Since the motorcycle is being ridden, you would not press the foot peg down or the motorcycle would crash. It seems the ChatGPT VLM resorts to predicting extra HOIs, even if some are less likely to be correct.</p>
 
     <figure>
-        <img src="project-3-images/3.2.png">
+        <img class="half" src="project-3-images/3.2.png">
     </figure>
 
     <p>The next image was also accurately predicted; however, there was a glitch of some sort, &lt;br&gt;. This is a meaningless prediction, but the other predictions are accurate.</p>
 
     <figure>
-        <img src="project-3-images/3.3.png">
+        <img class="half" src="project-3-images/3.3.png">
     </figure>
 
     <p>Next, an image of someone holding a toothpick over carrots was used. There is no knife in the picture (just a peeler on the side), the VLM said an HOI was to cut the carrots with a knife. While the image is misleading, the VLM was tricked since you cannot cut carrots with a knife.</p>
 
     <figure>
-        <img src="project-3-images/3.4.png">
+        <img class="half" src="project-3-images/3.4.png">
     </figure>
 
     <p>Last, the image below of a plane on top of another plane is pretty difficult to assign HOI to. The VLM does a good job of giving an HOI that is close to the ground truth label.</p>
 
     <figure>
-        <img src="project-3-images/3.5.png">
+        <img class="half" src="project-3-images/3.5.png">
     </figure>
 
     <p>In the images above, the VLM does a good job of predicting HOI. However, in the example below, the VLM makes no HOI predictions for the liquid in the glass, just about the glass.</p>
 
     <figure>
-        <img src="project-3-images/3.6.png">
+        <img class="half" src="project-3-images/3.6.png">
     </figure>
 
-    <p>To predict the HOI for this image better, I told the VLM to consider sub-objects and what HOI there is with sub-objects as well as the main object. The result is that the HOI with the liquid was given. While drink the liquid was not predicted, the ones that were provided regarding the liquid were legitimate HOIs.</p>
+    <p>To predict the HOI for this image better, I told the VLM to consider sub-objects and what HOI there is with sub-objects as well as the main object. The result is that the HOI with the liquid was given instead of just the glass. While <drink  liquid> was not predicted, the HOIs that were provided regarding the liquid were legitimate HOIs.</p>
 
     <figure>
-        <img src="project-3-images/3.7.png">
+        <img class="half" src="project-3-images/3.7.png">
     </figure>
 
 </div>
