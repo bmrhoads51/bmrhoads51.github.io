@@ -135,6 +135,8 @@ pending_table_caption = ""
 in_references = False
 ref_items = []
 heading_id = set()
+in_s11 = False
+s11_list_open = False
 
 
 def add_heading(label, level):
@@ -177,6 +179,10 @@ for child in DOC.element.body.iterchildren():
         TOC.append(("Abstract", "abstract"))
         continue
     clean = raw.rstrip(": ")
+    if in_s11 and p.style.name != "List Paragraph" and s11_list_open:
+        CONTENT.append("</ul>")
+        s11_list_open = False
+        in_s11 = False
     if clean in MAJOR:
         if pending_figure: CONTENT.append(pending_figure); pending_figure = None
         add_heading(clean, 2)
@@ -184,8 +190,15 @@ for child in DOC.element.body.iterchildren():
         continue
     if re.match(r"^(?:2|3)\.\d+\.?\s", clean) or re.match(r"^S1\.\d+", clean):
         add_heading(clean, 3)
+        in_s11 = clean.startswith("S1.1 ")
         continue
     if p.style.name == "List Paragraph" and raw and not raw.startswith("Figure"):
+        if in_s11:
+            if not s11_list_open:
+                CONTENT.append('<ul class="supplemental-list">')
+                s11_list_open = True
+            CONTENT.append(f"<li>{escape(clean)}</li>")
+            continue
         add_heading(clean, 4)
         if imgs:
             pending_figure = f'{figure_tag(imgs[0])}<img src="{imgs[0]}" alt="Graph neural network diagram from the paper" loading="lazy">'
@@ -215,6 +228,7 @@ for child in DOC.element.body.iterchildren():
     elif raw:
         CONTENT.append(f"<p>{html}</p>")
 
+if s11_list_open: CONTENT.append("</ul>")
 if pending_figure: CONTENT.append(pending_figure + "</figure>")
 if ref_items:
     CONTENT.append('<ol class="references">' + "".join(f"<li>{x}</li>" for x in ref_items) + "</ol>")
@@ -226,7 +240,7 @@ article = f'''<!doctype html>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Full research manuscript on graph neural networks, Ni–Al microstructures, and explainable artificial intelligence by Benjamin Rhoads and collaborators.">
   <title>Structure–Property Linkage in Alloys | Benjamin Rhoads</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20260922-figure-spacing">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>

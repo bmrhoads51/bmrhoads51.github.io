@@ -3,7 +3,8 @@
 The bioprinting XML is the structured version of the supplied final_paper.pdf
 (same DOI, title, abstract, figures, tables, and article text). Figures are
 extracted directly from that PDF. The welding page uses the supplied Word
-submission and its separate figure files.
+submission and its separate figure files, with corrections drawn from the
+published_paper.pdf supplied later.
 """
 from __future__ import annotations
 
@@ -23,7 +24,6 @@ from pypdf import PdfReader
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT.parent
-from latex2mathml.converter import convert as latex_to_mathml
 
 
 def slug(text: str) -> str:
@@ -40,7 +40,7 @@ def shell(title: str, description: str, journal: str, year: str,
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="{escape(description, quote=True)}">
   <title>{escape(title)} | Benjamin Rhoads</title>
-  <link rel="stylesheet" href="style.css?v=20260922-publications">
+  <link rel="stylesheet" href="style.css?v=20260922-figure-spacing">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -180,13 +180,18 @@ def image_size(path: Path) -> tuple[int, int]:
 
 def welding_results_section() -> str:
     width, height = image_size(ROOT / "assets" / "welding" / "figure-10.jpg")
-    return f'''<p>Symbolic regression was used to describe the hardness difference in the heat-affected zone as a function of the welding parameters. The published article reports two interpretable equations:</p>
+    return f'''<p>In addition to the common ML tools discussed in Sections 3.2 and 3.3, this work also explored XAI in studying FSW. Symbolic regression, an XAI tool, was used to extract mathematical equations that describe the comprehensive relationship between features and hardness difference in the HAZ. It aimed to uncover mathematical expressions that provide a clear and interpretable relationship between input features (processing features) and output targets (hardness difference), offering greater transparency in understanding the underlying physical mechanisms of the process. Using symbolic regression, the minimum test error was obtained with the following equation:</p>
 <div class="equation" id="equation-11"><span class="math">ΔHV<sub>0.3</sub> = <span class="fraction"><span>−49.4982 − ω</span><span>p</span></span> + <span class="fraction"><span>((t/(v + 3.5939))<sup>0.7303</sup> × 3.3194 + 5.3883)</span><span>0.1282</span></span> + t − <span class="fraction"><span>d</span><span>(v − 1.66)(d − v + 2.0877)</span></span> − 2.3939</span><span class="equation-number">Equation 11</span></div>
-<p>Here, <span class="math">t</span> is plate thickness, <span class="math">v</span> is tool traverse speed, <span class="math">p</span> is the pseudo heat index, <span class="math">d</span> is tool shoulder diameter, and <span class="math">ω</span> is tool rotational rate. The published test results for Equation 11 are an RMSE of 3.96 HV 0.3 and an R² of 0.90.</p>
+<p>where ΔHV<sub>0.3</sub> is the hardness difference (HV 0.3), t represents the plate thickness (mm), v is the tool traverse speed (ipm), p is the pseudo heat index (rpm²/ipm), d is the tool shoulder diameter (mm), and ω is the tool rotational rate (rpm).</p>
 <figure id="figure-10"><img src="assets/welding/figure-10.jpg" width="{width}" height="{height}" alt="Predicted versus measured hardness difference" loading="lazy"><figcaption>Figure 10. Hardness difference predicted by Equation 11 versus experimental hardness difference.</figcaption></figure>
-<p>A simpler relation uses plate thickness and traverse speed:</p>
+<p>Other simpler equations were also extracted from this model with higher errors. One of the equations extracted is provided as below:</p>
 <div class="equation" id="equation-12"><span class="math">ΔHV<sub>0.3</sub> = 45.73 + <span class="fraction"><span>30.46 × t</span><span>v + 3.98</span></span></span><span class="equation-number">Equation 12</span></div>
-<p>The published article reports a test RMSE of 5.91 HV 0.3 and R² of 0.77 for Equation 12.</p>'''
+<p>Eq. (12) is a simpler equation compared to Eq. (11), with a test RMSE of 5.91 and a test R² value of 0.77, containing only two features: tool traverse speed (v) and plate thickness (t).</p>'''
+
+
+WELDING_FINAL_ABSTRACT = """Friction stir welding of precipitation-strengthened aluminum alloys presents a significant hardness difference between the heat-affected zone (HAZ) and the base metal (BM). A wide range of processing, materials, machine and tool parameters (such as tool rotational rate, tool traverse speed, and tool geometry, especially shoulder diameter), are known to affect the HAZ hardness, making it difficult to navigate the vast combinatorial parameter search space for optimum HAZ hardness. In this study, machine learning (ML) techniques were applied to identify the key processing parameters that affect the hardness difference between the HAZ and BM in AA7075-T6 alloy. Later, an adaptive design strategy was implemented to iteratively determine the optimal combination of processing parameters needed to obtain a targeted hardness difference in the HAZ. Initial data was collected from our random experiments as well as data within reported literature. The initial dataset was then used to train adaptive design tools, and the ML predicted processing parameters were validated via subsequent experiments. It was demonstrated that the ML-guided approach required the generation of only six experimental data points to attain a hardness difference of 41.00 HV 0.3 in the HAZ, compared to trial-and-error based conventional method in which 32 data points were needed to obtain a HAZ hardness difference of 42.00 HV 0.3, thereby significantly increasing the efficiency of process optimization for a targeted mechanical property. Finally, high fidelity mathematical equations were extracted from the data to predict hardness difference in the HAZ as a function of processing parameters using explainable artificial intelligence."""
+
+WELDING_FINAL_INTRO = """The Welding Institute (TWI) in the United Kingdom developed a solid-state joining method known as Friction Stir Welding (FSW) in 1991, which was initially used for aluminum alloys. In its simplest form, a non-consumable rotating tool is inserted into the adjoining edges of the sheets or plates to be joined and moved along the joint line. The tool serves two main functions: (i) heating of the workpiece through the friction between the tool and the workpiece in addition to adiabatic plastic deformation, and (ii) facilitating material flow in the welded region to form the joint. This localized heating softens the material surrounding the tool, and the combination of tool rotation and movement causes the material to move from the front of the pin to the back. The entire process of joining takes place below the melting temperature of the materials used, and results in a ‘solid state’ joint [1]. Mishra et al. developed Friction Stir Processing (FSP) as a universal tool for modifying microstructures, based on the fundamental principles of FSW. In this approach, a rotating tool is inserted into a single-piece workpiece to induce localized microstructural changes to enhance specific properties [2,3]. A schematic diagram of FSW is shown in Fig. 1. FSW is an alternative solution to fusion welding which causes common defects like porosity, hot cracking, and reduced strength in welded areas. This alternative is particularly advantageous for high-strength aluminum alloys (such as the 7xxx series) [3,4]. Aluminum 7075 (AA7075) is one such alloy, which is increasingly valued in both the aerospace and automotive industries for its lightweight properties and excellent mechanical performance. In fact, AA7075 is often comparable to properties of some low-grade steels [5–8]. Its composition consists of Al, 5.1–6.1 % Mg, 2.1–2.5 % Zn, and 1.2–1.6 % Cu, alongside trace elements like Fe, Si, Mn, Ti, and Cr [9]. AA7075 achieves its high strength through the presence of η′ precipitates, which restrict dislocation movement [10–12]."""
 
 
 def build_welding() -> None:
@@ -225,8 +230,10 @@ def build_welding() -> None:
             parts.append('<section class="abstract"><h2 id="abstract">Abstract</h2>')
             continue
         if paragraph_index == 11:
-            parts.append(f"<p>{html}</p></section>")
+            parts.append(f"<p>{escape(WELDING_FINAL_ABSTRACT)}</p></section>")
             continue
+        if paragraph_index == 15:
+            html = escape(WELDING_FINAL_INTRO)
         if raw.startswith("Keywords:"):
             parts.append(f'<p class="journal">{html}</p>')
             continue
@@ -240,6 +247,8 @@ def build_welding() -> None:
             continue
         if p.style.name.startswith("Heading"):
             level = min(4, int(p.style.name.split()[-1]) + 1)
+            if raw == "Friction stir welding FSW)":
+                raw = "Friction Stir Welding (FSW)"
             ident = slug(raw)
             parts.append(f'<h{level} id="{ident}">{escape(raw)}</h{level}>')
             if level == 2:
@@ -296,6 +305,7 @@ XLINK = "{http://www.w3.org/1999/xlink}href"
 
 
 def xml_inline(e: ET.Element) -> str:
+    from latex2mathml.converter import convert as latex_to_mathml
     tag = e.tag.split("}")[-1]
     if tag in ("fig", "table-wrap", "disp-formula"):
         return ""

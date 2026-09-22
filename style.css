@@ -83,3 +83,9 @@ body{font-family:Calibri,Carlito,"Segoe UI",Arial,sans-serif}
 @media(max-width:800px){.home-hero{grid-template-columns:1fr;gap:32px;min-height:0}.featured-work{max-width:650px}.home-profiles{margin-top:35px}}
 @media(max-width:600px){.featured-figure a{height:220px}.featured-figure img{height:100%;padding:8px}}
 @media(max-width:540px){.home-about{grid-template-columns:1fr;gap:18px}.home-headshot{width:180px;height:230px}}
+
+/* Article figures keep their intrinsic proportions, including when a source supplies dimensions. */
+.paper figure{margin:24px 0 28px}
+.paper figure img{width:auto;height:auto}
+.supplemental-list{margin:16px 0 28px;padding-left:26px}
+.supplemental-list li{margin:8px 0;font-weight:400}
