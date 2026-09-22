@@ -6,14 +6,21 @@
   const link = document.getElementById("featured-link");
   const image = document.getElementById("featured-image");
   const caption = document.getElementById("featured-caption");
-  const position = document.getElementById("carousel-position");
-  const previous = document.getElementById("carousel-prev");
-  const next = document.getElementById("carousel-next");
-  if (!section || !link || !image || !caption || !position || !previous || !next) return;
+  const dots = document.getElementById("carousel-dots");
+  if (!section || !link || !image || !caption || !dots) return;
 
   let current = 0;
   let timer;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const dotButtons = items.map((item, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "carousel-dot";
+    button.setAttribute("aria-label", `Show ${item.caption}`);
+    button.addEventListener("click", () => { show(index); start(); });
+    dots.append(button);
+    return button;
+  });
 
   function show(index) {
     current = (index + items.length) % items.length;
@@ -22,7 +29,9 @@
     image.alt = item.alt;
     link.href = item.paper;
     caption.textContent = `${item.caption}. Click the image to view it in the paper.`;
-    position.textContent = `${current + 1} of ${items.length}`;
+    dotButtons.forEach((button, dotIndex) => {
+      button.setAttribute("aria-pressed", String(dotIndex === current));
+    });
   }
 
   function stop() {
@@ -37,8 +46,6 @@
     }
   }
 
-  previous.addEventListener("click", () => { show(current - 1); start(); });
-  next.addEventListener("click", () => { show(current + 1); start(); });
   section.addEventListener("mouseenter", stop);
   section.addEventListener("mouseleave", start);
   section.addEventListener("focusin", stop);

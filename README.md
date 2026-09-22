@@ -16,7 +16,7 @@ For later edits, repeat steps 2–5. Clone only when setting up a different comp
 
 ## Choose homepage images
 
-Edit the entries in `featured-images.js` to choose which figures rotate on the homepage. Each entry gives an `image` path, a short `alt` description, a `caption`, and a `paper` link. The first image is also in `index.html` as a fallback for visitors whose browsers do not run JavaScript. When you change the first entry, update that fallback image and link too. `carousel.js` handles the automatic rotation and Previous/Next buttons; you normally do not need to edit it.
+Edit the entries in `featured-images.js` to choose which figures rotate on the homepage. Each entry gives an `image` path, a short `alt` description, a `caption`, and a `paper` link. The first image is also in `index.html` as a fallback for visitors whose browsers do not run JavaScript. When you change the first entry, update that fallback image and link too. `carousel.js` handles the automatic rotation and clickable dots; you normally do not need to edit it.
 
 The current three entries are Figures 2.1, 2.2, and 2.3 from the GNN paper. Their links lead directly to those figures on the paper page. For another publication, put its image files in `assets/`, add a publication page, and add entries pointing to that page. Keep the `paper` value as a relative path such as `new-paper.html#figure-1`.
 
