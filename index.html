@@ -1,20 +1,62 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Research publications and computer vision projects by Benjamin Rhoads, focused on materials science and machine learning.">
-  <title>Benjamin Rhoads | Research &amp; Projects</title><link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Benjamin Rhoads: materials science, artificial intelligence, publications, and projects.">
+  <title>Benjamin Rhoads | Materials &amp; AI</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="home-page">
   <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header"><div class="wrap header-inner"><a class="brand" href="index.html">Benjamin Rhoads<span>Research &amp; projects</span></a><nav aria-label="Main navigation"><a href="#about">About</a><a href="#publications">Publications</a><a href="#projects">Projects</a><a href="https://github.com/bmrhoads51" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav></div></header>
-  <main id="main">
-    <section class="hero wrap" aria-labelledby="hero-title"><div class="hero-copy"><p class="eyebrow">Materials science · Machine learning · Computer vision</p><h1 id="hero-title">Research at the intersection of materials and computation.</h1><p class="lede">I’m Benjamin Rhoads. This site brings together my published research and selected technical projects, including work on graph neural networks for alloy microstructures.</p><div class="actions"><a class="button" href="#publications">Explore publications ↓</a><a class="text-link" href="#projects">View projects →</a></div></div><div class="hero-visual"><img src="assets/gnn/image2.png" alt="Research figure illustrating a microstructure and graph representation" loading="eager"><span>Microstructure → graph representation</span></div></section>
-    <section id="about" class="section section-rule wrap"><div class="section-label"><span>01 / About</span></div><div class="section-body"><h2>About my work</h2><p>My research explores how machine learning can connect material microstructures with their properties. In a published study of Ni–Al alloys, my coauthors and I used graph neural networks and explainable AI to predict strengthening during precipitate coarsening and examine which features matter most.</p><p>I also develop computer vision projects involving image processing, geometric transformations, object detection, and visual language models. This site will grow as I add more publications and professional work.</p></div></section>
-    <section id="publications" class="section section-rule wrap"><div class="section-label"><span>02 / Publications</span></div><div class="section-body"><h2>Selected publication</h2><article class="feature-card"><div class="feature-meta">2025 · <em>Materials</em> · Research article</div><h3><a href="gnn-paper.html">Structure–Property Linkage in Alloys Using Graph Neural Network and Explainable Artificial Intelligence</a></h3><p class="muted">Benjamin Rhoads, Abigail Hogue, Lars Kotthoff, and Samrat Choudhury</p><p>Graph representations of Ni–Al microstructures support property prediction across sizes and dimensions, with feature importance analysis and Bayesian inference providing physical insight.</p><p class="muted">DOI: <a href="https://doi.org/10.3390/ma18163778" target="_blank" rel="noopener noreferrer">10.3390/ma18163778</a></p><div class="card-links"><a href="gnn-paper.html">Read the full paper on this site →</a><a href="https://doi.org/10.3390/ma18163778" target="_blank" rel="noopener noreferrer">Published article ↗</a></div></article></div></section>
-    <section id="projects" class="section section-rule wrap"><div class="section-label"><span>03 / Projects</span></div><div class="section-body"><h2>Computer vision projects</h2><p class="section-intro">Selected work from a computer vision course at the University of Mississippi.</p><div class="project-grid"><article class="project-card"><span class="project-number">01</span><h3><a href="project-1.html">Image processing and diffusion</a></h3><p>Perspective and orthographic projections, histogram methods, sharpening, and anisotropic diffusion.</p><a class="card-arrow" href="project-1.html">View project →</a></article><article class="project-card"><span class="project-number">02</span><h3><a href="project-2.html">Homography and image warping</a></h3><p>Image rectification, a stitched football field view, and comparison of mesh and thin plate spline warping.</p><a class="card-arrow" href="project-2.html">View project →</a></article><article class="project-card"><span class="project-number">03</span><h3><a href="project-3.html">Object detection and visual language</a></h3><p>Lightweight detection, non maximum suppression, and human object interaction analysis.</p><a class="card-arrow" href="project-3.html">View project →</a></article></div></div></section>
-    <section class="section section-rule wrap connect"><div class="section-label"><span>04 / Connect</span></div><div class="section-body"><h2>Find my work online</h2><p>Browse the code and project history through my GitHub profile.</p><a class="text-link" href="https://github.com/bmrhoads51" target="_blank" rel="noopener noreferrer">GitHub profile ↗</a></div></section>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="index.html">Benjamin Rhoads</a>
+      <nav aria-label="Main navigation">
+        <a href="#about">About</a>
+        <a href="#publications">Publications</a>
+        <a href="#projects">Projects</a>
+        <a href="#profiles">Profiles</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wrap home-main">
+    <section id="about" class="home-intro">
+      <h1>Materials science and artificial intelligence</h1>
+      <p>I’m Benjamin Rhoads. My work explores how computational methods and AI can help us understand materials and connect their structure, processing, and properties.</p>
+      <p>This site collects my publications and selected projects in materials research, machine learning, and computer vision.</p>
+    </section>
+
+    <section id="publications" class="home-section">
+      <h2>Publications</h2>
+      <article>
+        <h3><a href="gnn-paper.html">Structure–Property Linkage in Alloys Using Graph Neural Network and Explainable Artificial Intelligence</a></h3>
+        <p>Benjamin Rhoads, Abigail Hogue, Lars Kotthoff, and Samrat Choudhury · <em>Materials</em>, 2025</p>
+        <p><a href="gnn-paper.html">Read the paper on this site</a> · <a href="https://doi.org/10.3390/ma18163778" target="_blank" rel="noopener noreferrer">Published article</a></p>
+      </article>
+    </section>
+
+    <section id="projects" class="home-section">
+      <h2>Projects</h2>
+      <p>Selected computer vision coursework from the University of Mississippi.</p>
+      <ul class="project-list">
+        <li><a href="project-1.html">Image processing and diffusion</a></li>
+        <li><a href="project-2.html">Homography and image warping</a></li>
+        <li><a href="project-3.html">Object detection and visual language</a></li>
+      </ul>
+    </section>
+
+    <section id="profiles" class="home-section">
+      <h2>Profiles</h2>
+      <ul class="profile-links">
+        <li><a href="https://scholar.google.com/citations?user=8q-4gY8AAAAJ&amp;hl=en&amp;oi=ao" target="_blank" rel="noopener noreferrer">Google Scholar</a></li>
+        <li><a href="https://www.linkedin.com/in/benjamin-rhoads" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+        <li><a href="https://github.com/bmrhoads51" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+      </ul>
+    </section>
   </main>
-  <footer class="site-footer"><div class="wrap">© Benjamin Rhoads · Built as a static site for GitHub Pages</div></footer>
+
+  <footer class="site-footer"><div class="wrap">© Benjamin Rhoads</div></footer>
 </body>
 </html>
