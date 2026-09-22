@@ -46,8 +46,14 @@ body{font-family:Calibri,Carlito,"Segoe UI",Arial,sans-serif}
 /* Featured figures on the homepage */
 .home-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:center;gap:54px;min-height:430px}
 .home-hero .home-intro{padding:0}
-.home-headshot{display:block;width:150px;height:180px;object-fit:cover;object-position:center 28%;border-radius:6px;margin:0 0 24px}
+.home-about{display:grid;grid-template-columns:180px minmax(0,1fr);align-items:start;gap:24px}
+.home-about p{margin:0}
+.home-headshot{display:block;width:180px;height:230px;object-fit:cover;object-position:center 28%}
 .featured-work{min-width:0;padding:0}
+.carousel-stage{display:grid;grid-template-columns:24px minmax(0,1fr) 24px;align-items:center;gap:6px}
+.carousel-arrow{width:24px;height:40px;padding:0;border:0;background:transparent;color:var(--muted);font:400 24px/1 Calibri,Carlito,"Segoe UI",Arial,sans-serif;cursor:pointer}
+.carousel-arrow:hover{color:var(--teal)}
+.carousel-arrow:focus-visible{outline:3px solid #f0a546;outline-offset:2px}
 .featured-figure{margin:0}
 .featured-figure a{display:block;border:1px solid var(--line);background:#fff;height:260px}
 .featured-figure a:hover{border-color:var(--teal)}
@@ -76,3 +82,4 @@ body{font-family:Calibri,Carlito,"Segoe UI",Arial,sans-serif}
 @media(max-width:600px){.featured-figure img{height:255px;padding:8px}.listing-page .header-inner{align-items:flex-start;flex-direction:column;padding:17px 0;gap:10px}.listing-main{padding-top:35px}}
 @media(max-width:800px){.home-hero{grid-template-columns:1fr;gap:32px;min-height:0}.featured-work{max-width:650px}.home-profiles{margin-top:35px}}
 @media(max-width:600px){.featured-figure a{height:220px}.featured-figure img{height:100%;padding:8px}}
+@media(max-width:540px){.home-about{grid-template-columns:1fr;gap:18px}.home-headshot{width:180px;height:230px}}

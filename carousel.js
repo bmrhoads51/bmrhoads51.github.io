@@ -10,7 +10,9 @@
   const link = document.getElementById("featured-link");
   const image = document.getElementById("featured-image");
   const dots = document.getElementById("carousel-dots");
-  if (!section || !link || !image || !dots) return;
+  const previous = document.getElementById("carousel-previous");
+  const next = document.getElementById("carousel-next");
+  if (!section || !link || !image || !dots || !previous || !next) return;
 
   let current = 0;
   let timer;
@@ -49,6 +51,8 @@
   }
 
   section.addEventListener("mouseenter", stop);
+  previous.addEventListener("click", () => { show(current - 1); start(); });
+  next.addEventListener("click", () => { show(current + 1); start(); });
   section.addEventListener("mouseleave", start);
   section.addEventListener("focusin", stop);
   section.addEventListener("focusout", () => window.setTimeout(start, 0));

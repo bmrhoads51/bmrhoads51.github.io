@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Benjamin Rhoads: materials science, artificial intelligence, publications, and projects.">
   <title>Benjamin Rhoads | Materials &amp; AI</title>
-  <link rel="stylesheet" href="style.css?v=20260922-headshot">
+  <link rel="stylesheet" href="style.css?v=20260922-layout">
   <script src="featured-images.js?v=20260922-carousel" defer></script>
-  <script src="carousel.js?v=20260922-carousel" defer></script>
+  <script src="carousel.js?v=20260922-arrows" defer></script>
 </head>
 <body class="home-page">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -25,14 +25,20 @@
   <main id="main" class="wrap home-main">
     <div class="home-hero">
       <section class="home-intro" aria-labelledby="intro-title">
-        <img class="home-headshot" src="assets/head-shot.jpg" alt="Portrait of Benjamin Rhoads" width="2663" height="3994">
         <h1 id="intro-title">Integrating Artificial Intelligence with Materials Science</h1>
-        <p>I’m Benjamin Rhoads. I explore how machine learning and deep learning can solve problems in materials science and beyond. My work uses these tools to understand materials, connect their processing and structure to their properties, and guide new discoveries.</p>
+        <div class="home-about">
+          <img class="home-headshot" src="assets/head-shot.jpg" alt="Portrait of Benjamin Rhoads" width="2663" height="3994">
+          <p>I’m Benjamin Rhoads. I explore how machine learning and deep learning can solve problems in materials science and beyond. My work uses these tools to understand materials, connect their processing and structure to their properties, and guide new discoveries.</p>
+        </div>
       </section>
 
       <section class="featured-work" aria-label="Featured research images">
-        <div class="featured-figure">
-          <a id="featured-link" href="gnn-paper.html" aria-label="View the paper for this featured image"><img id="featured-image" src="assets/gnn/image1.png" alt="Ni–Al microstructures at four stages of coarsening"></a>
+        <div class="carousel-stage">
+          <button id="carousel-previous" class="carousel-arrow" type="button" aria-label="Previous featured image">&lt;</button>
+          <div class="featured-figure">
+            <a id="featured-link" href="gnn-paper.html" aria-label="View the paper for this featured image"><img id="featured-image" src="assets/gnn/image1.png" alt="Ni–Al microstructures at four stages of coarsening"></a>
+          </div>
+          <button id="carousel-next" class="carousel-arrow" type="button" aria-label="Next featured image">&gt;</button>
         </div>
         <p class="carousel-note">Click the image to view its paper.</p>
         <div id="carousel-dots" class="carousel-dots" role="group" aria-label="Choose featured image"></div>
