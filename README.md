@@ -2,18 +2,17 @@
 
 A static website for publications and computer vision projects. Open `index.html` locally to preview it. The full paper page is `gnn-paper.html`; its figures are in `assets/gnn/`.
 
-## Publish with GitHub Desktop
+## Edit and publish with GitHub Desktop
 
-The downloaded `bmrhoads51.github.io-main` folder is a GitHub ZIP download. It has no `.git` directory, so it is not connected to GitHub and cannot be pushed as it stands. **Clone** means making a local copy that stays connected to the repository; **push** means uploading your committed changes.
+This folder is already the clone of [bmrhoads51/bmrhoads51.github.io](https://github.com/bmrhoads51/bmrhoads51.github.io). It is connected to GitHub, so there is no need to clone it again or copy files from the old ZIP download. **Commit** saves a named version locally; **push** uploads your commits to GitHub.
 
-1. Install [GitHub Desktop](https://desktop.github.com/) and sign in to the GitHub account that owns the website.
-2. In GitHub Desktop, choose **File → Clone repository**, select `bmrhoads51/bmrhoads51.github.io` (or paste the actual repository URL from GitHub), and choose a local folder. If that repository name is different, use the one that contains your current website.
-3. In File Explorer, copy the contents of this updated `bmrhoads51.github.io-main` folder **into the cloned folder**. Copy `index.html`, `gnn-paper.html`, `style.css`, `assets/`, `tools/`, and the existing project pages and image folders. Do not copy the outer `bmrhoads51.github.io-main` folder itself; `index.html` needs to sit at the top level of the repository.
-4. Return to GitHub Desktop. Review the changed files, enter a summary such as `Create research website and GNN paper page`, click **Commit to main**, then **Push origin**.
-5. On GitHub, open the repository’s **Settings → Pages**. Under **Build and deployment**, choose **Deploy from a branch**, branch `main`, folder `/ (root)`, then save. If Pages is already configured this way, the push will update the site automatically.
-6. For a repository named exactly `bmrhoads51.github.io`, the site address is `https://bmrhoads51.github.io/`. GitHub Pages may take a few minutes to update after a push.
+1. In GitHub Desktop, choose **File → Add local repository** and select this `bmrhoads51.github.io` folder if it is not already listed. Sign in to the GitHub account that owns the repository if prompted.
+2. Edit files in this folder. The homepage is `index.html`, the paper is `gnn-paper.html`, and the shared design is in `style.css`. Open `index.html` in a browser to preview local edits.
+3. Return to GitHub Desktop. Review the changed files, write a short summary, and click **Commit to main**.
+4. Click **Push origin**. GitHub Pages publishes the `main` branch from the repository root at [https://bmrhoads51.github.io/](https://bmrhoads51.github.io/). Publication can take a few minutes.
+5. Check that address in a private browser window if your usual browser still shows an older cached page. A hard refresh also usually clears a stale copy (Ctrl+Shift+R on Windows).
 
-For later edits, work in the **cloned folder**. Open it in your editor, make changes, preview `index.html`, then use GitHub Desktop to commit and push. You only clone once per computer.
+For later edits, repeat steps 2–5. Clone only when setting up a different computer.
 
 ## Paper source
 
