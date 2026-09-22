@@ -117,6 +117,16 @@ def slug(text):
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
 
+def figure_tag(image):
+    figure_ids = {
+        "image1.png": "figure-2-1",
+        "image2.png": "figure-2-2",
+        "image3.png": "figure-2-3",
+    }
+    ident = figure_ids.get(Path(image).name)
+    return f'<figure id="{ident}">' if ident else "<figure>"
+
+
 MAJOR = {"Introduction", "Methods", "Results", "Discussion", "Conclusion", "Supplemental", "References"}
 CONTENT = []
 TOC = []
@@ -178,15 +188,15 @@ for child in DOC.element.body.iterchildren():
     if p.style.name == "List Paragraph" and raw and not raw.startswith("Figure"):
         add_heading(clean, 4)
         if imgs:
-            pending_figure = f'<figure><img src="{imgs[0]}" alt="Graph neural network diagram from the paper" loading="lazy">'
+            pending_figure = f'{figure_tag(imgs[0])}<img src="{imgs[0]}" alt="Graph neural network diagram from the paper" loading="lazy">'
         continue
     if imgs:
         if pending_figure and raw.startswith("Figure"):
             CONTENT.append(pending_figure + f'<figcaption>{html}</figcaption></figure>')
-            pending_figure = f'<figure><img src="{imgs[0]}" alt="Research figure from the manuscript" loading="lazy">'
+            pending_figure = f'{figure_tag(imgs[0])}<img src="{imgs[0]}" alt="Research figure from the manuscript" loading="lazy">'
             continue
         if pending_figure: CONTENT.append(pending_figure + "</figure>")
-        pending_figure = f'<figure><img src="{imgs[0]}" alt="{escape(raw[:130] or "Research figure from the manuscript", quote=True)}" loading="lazy">'
+        pending_figure = f'{figure_tag(imgs[0])}<img src="{imgs[0]}" alt="{escape(raw[:130] or "Research figure from the manuscript", quote=True)}" loading="lazy">'
         if raw.startswith("Figure"):
             CONTENT.append(pending_figure + f'<figcaption>{html}</figcaption></figure>')
             pending_figure = None
@@ -220,11 +230,11 @@ article = f'''<!doctype html>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header"><div class="wrap header-inner"><a class="brand" href="index.html">Benjamin Rhoads<span>Research &amp; projects</span></a><nav aria-label="Main navigation"><a href="index.html#about">About</a><a href="index.html#publications">Publications</a><a href="index.html#projects">Projects</a></nav></div></header>
+  <header class="site-header"><div class="wrap header-inner"><a class="brand" href="index.html">Benjamin Rhoads</a><nav aria-label="Main navigation"><a href="index.html">Home</a><a href="publications.html">Publications</a><a href="projects.html">Projects</a></nav></div></header>
   <main id="main" class="wrap paper-layout">
     <aside class="paper-sidebar" aria-label="Article navigation"><p class="eyebrow">On this page</p>{toc}</aside>
     <article class="paper">
-      <div class="paper-top"><p class="eyebrow">Publication · Materials · 2025</p><h1>Structure–Property Linkage in Alloys Using Graph Neural Network and Explainable Artificial Intelligence</h1><p class="authors">Benjamin Rhoads · Abigail Hogue · Lars Kotthoff · Samrat Choudhury</p><p class="journal"><em>Materials</em> 18(16), 3778 · DOI: 10.3390/ma18163778</p><div class="actions"><a class="button" href="https://doi.org/10.3390/ma18163778" target="_blank" rel="noopener noreferrer">Read published article ↗</a></div><p class="source-note">Full text below follows the supplied April 2026 Word manuscript. The journal article is the version of record.</p></div>
+      <div class="paper-top"><p class="eyebrow">Publication · Materials · 2025</p><h1>Structure–Property Linkage in Alloys Using Graph Neural Network and Explainable Artificial Intelligence</h1><p class="authors">Benjamin Rhoads · Abigail Hogue · Lars Kotthoff · Samrat Choudhury</p><p class="journal"><em>Materials</em> 18(16), 3778 · DOI: 10.3390/ma18163778</p><div class="actions"><a class="button" href="https://doi.org/10.3390/ma18163778" target="_blank" rel="noopener noreferrer">Read published article ↗</a></div></div>
       {chr(10).join(CONTENT)}
     </article>
   </main>

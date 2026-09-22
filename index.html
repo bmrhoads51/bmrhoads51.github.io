@@ -6,6 +6,8 @@
   <meta name="description" content="Benjamin Rhoads: materials science, artificial intelligence, publications, and projects.">
   <title>Benjamin Rhoads | Materials &amp; AI</title>
   <link rel="stylesheet" href="style.css">
+  <script src="featured-images.js" defer></script>
+  <script src="carousel.js" defer></script>
 </head>
 <body class="home-page">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -13,42 +15,35 @@
     <div class="wrap header-inner">
       <a class="brand" href="index.html">Benjamin Rhoads</a>
       <nav aria-label="Main navigation">
-        <a href="#about">About</a>
-        <a href="#publications">Publications</a>
-        <a href="#projects">Projects</a>
-        <a href="#profiles">Profiles</a>
+        <a href="index.html" aria-current="page">Home</a>
+        <a href="publications.html">Publications</a>
+        <a href="projects.html">Projects</a>
       </nav>
     </div>
   </header>
 
   <main id="main" class="wrap home-main">
-    <section id="about" class="home-intro">
-      <h1>Materials science and artificial intelligence</h1>
+    <section class="home-intro" aria-labelledby="intro-title">
+      <h1 id="intro-title">Materials science and artificial intelligence</h1>
       <p>I’m Benjamin Rhoads. My work explores how computational methods and AI can help us understand materials and connect their structure, processing, and properties.</p>
-      <p>This site collects my publications and selected projects in materials research, machine learning, and computer vision.</p>
+      <p>This site brings together my research and selected projects in materials science, machine learning, and computer vision.</p>
     </section>
 
-    <section id="publications" class="home-section">
-      <h2>Publications</h2>
-      <article>
-        <h3><a href="gnn-paper.html">Structure–Property Linkage in Alloys Using Graph Neural Network and Explainable Artificial Intelligence</a></h3>
-        <p>Benjamin Rhoads, Abigail Hogue, Lars Kotthoff, and Samrat Choudhury · <em>Materials</em>, 2025</p>
-        <p><a href="gnn-paper.html">Read the paper on this site</a> · <a href="https://doi.org/10.3390/ma18163778" target="_blank" rel="noopener noreferrer">Published article</a></p>
-      </article>
+    <section class="featured-work" aria-labelledby="featured-title">
+      <h2 id="featured-title">Featured research</h2>
+      <figure class="featured-figure">
+        <a id="featured-link" href="gnn-paper.html#figure-2-1"><img id="featured-image" src="assets/gnn/image1.png" alt="Ni–Al microstructures at four stages of coarsening"></a>
+        <figcaption id="featured-caption">Figure 2.1 — Ni–Al microstructure evolution. Click the image to view it in the paper.</figcaption>
+      </figure>
+      <div class="carousel-controls" aria-label="Featured image controls">
+        <button id="carousel-prev" type="button" aria-label="Previous image">← Previous</button>
+        <span id="carousel-position">1 of 3</span>
+        <button id="carousel-next" type="button" aria-label="Next image">Next →</button>
+      </div>
     </section>
 
-    <section id="projects" class="home-section">
-      <h2>Projects</h2>
-      <p>Selected computer vision coursework from the University of Mississippi.</p>
-      <ul class="project-list">
-        <li><a href="project-1.html">Image processing and diffusion</a></li>
-        <li><a href="project-2.html">Homography and image warping</a></li>
-        <li><a href="project-3.html">Object detection and visual language</a></li>
-      </ul>
-    </section>
-
-    <section id="profiles" class="home-section">
-      <h2>Profiles</h2>
+    <section class="home-section home-profiles" aria-labelledby="profiles-title">
+      <h2 id="profiles-title">Profiles</h2>
       <ul class="profile-links">
         <li><a href="https://scholar.google.com/citations?user=8q-4gY8AAAAJ&amp;hl=en&amp;oi=ao" target="_blank" rel="noopener noreferrer">Google Scholar</a></li>
         <li><a href="https://www.linkedin.com/in/benjamin-rhoads" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
