@@ -18,5 +18,29 @@ window.featuredImages = [
     alt: "Graph neural network with message passing and property prediction",
     caption: "Figure 2.3 — Graph neural network architecture",
     paper: "gnn-paper.html#figure-2-3"
+  },
+  {
+    image: "assets/welding/figure-1.jpg",
+    alt: "Friction stir welding setup and zones across the weld",
+    caption: "Figure 1 — Friction stir welding process",
+    paper: "welding-paper.html#figure-1"
+  },
+  {
+    image: "assets/welding/figure-5.jpg",
+    alt: "Hardness profiles for two friction stir welding conditions",
+    caption: "Figure 5 — Weld hardness profiles",
+    paper: "welding-paper.html#figure-5"
+  },
+  {
+    image: "assets/bioprinting/figure-1.jpg",
+    alt: "Defect measurement and adaptive design for three-dimensional printed dosage forms",
+    caption: "Figure 1 — Printlet defect analysis",
+    paper: "bioprinting-paper.html#figure-1"
+  },
+  {
+    image: "assets/bioprinting/figure-6.jpg",
+    alt: "Contact angle measurements of batch and continuous printed dosage forms",
+    caption: "Figure 6 — Printlet contact angles",
+    paper: "bioprinting-paper.html#figure-6"
   }
 ];

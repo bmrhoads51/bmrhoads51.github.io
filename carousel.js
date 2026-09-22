@@ -1,6 +1,10 @@
 (() => {
-  const items = window.featuredImages;
-  if (!Array.isArray(items) || items.length === 0) return;
+  if (!Array.isArray(window.featuredImages) || window.featuredImages.length === 0) return;
+  const items = [...window.featuredImages];
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
 
   const section = document.querySelector(".featured-work");
   const link = document.getElementById("featured-link");

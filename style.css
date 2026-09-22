@@ -38,6 +38,7 @@ body{font-family:Calibri,Carlito,"Segoe UI",Arial,sans-serif}
 .paper h1,.paper h2,.paper h3,.paper h4,.paper table{font-family:Calibri,Carlito,"Segoe UI",Arial,sans-serif}
 .paper .equation,.math,.fraction,.radical{font-family:Arial,"Segoe UI Symbol",sans-serif}
 .paper .equation{font-size:1.3rem;line-height:1.5}
+.paper math{font-family:Arial,"Segoe UI Symbol",sans-serif;font-size:1em}
 .paper figure[id]{scroll-margin-top:24px}
 .site-footer{background:#fff;color:var(--muted);border-top:1px solid var(--line);padding:20px 0}
 .site-footer a{color:var(--teal)}
