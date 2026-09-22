@@ -9,9 +9,8 @@
   const section = document.querySelector(".featured-work");
   const link = document.getElementById("featured-link");
   const image = document.getElementById("featured-image");
-  const caption = document.getElementById("featured-caption");
   const dots = document.getElementById("carousel-dots");
-  if (!section || !link || !image || !caption || !dots) return;
+  if (!section || !link || !image || !dots) return;
 
   let current = 0;
   let timer;
@@ -32,7 +31,6 @@
     image.src = item.image;
     image.alt = item.alt;
     link.href = item.paper;
-    caption.textContent = `${item.caption}. Click the image to view it in the paper.`;
     dotButtons.forEach((button, dotIndex) => {
       button.setAttribute("aria-pressed", String(dotIndex === current));
     });
