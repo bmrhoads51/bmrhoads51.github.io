@@ -79,6 +79,7 @@ body{font-family:Calibri,Carlito,"Segoe UI",Arial,sans-serif}
 .listing-links{list-style:none;margin:25px 0 0;padding:0}
 .listing-links a{font-size:1.15rem;font-weight:600;color:var(--ink)}
 .listing-links p{color:var(--muted)}
+.course-projects h2{font-size:1.5rem;line-height:1.3;margin:0}
 @media(max-width:600px){.featured-figure img{height:255px;padding:8px}.listing-page .header-inner{align-items:flex-start;flex-direction:column;padding:17px 0;gap:10px}.listing-main{padding-top:35px}}
 @media(max-width:800px){.home-hero{grid-template-columns:1fr;gap:32px;min-height:0}.featured-work{max-width:650px}.home-profiles{margin-top:35px}}
 @media(max-width:600px){.featured-figure a{height:220px}.featured-figure img{height:100%;padding:8px}}
