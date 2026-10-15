@@ -1,0 +1,6 @@
+# Keep the course submission code and generated data off the public website.
+/fm-project-1/*.py
+/fm-project-1/results/
+/fm-project-1/imagenet_vit_b_16_v1_labels.txt
+/fm-project-1/figures/clip_task2_cross_entropy.png
+/tools/import_fm_project.py

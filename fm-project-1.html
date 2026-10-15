@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project 1: Visual Representations and CLIP | Benjamin Rhoads</title>
+  <style>
+    body { font-family: Calibri, Carlito, "Segoe UI", Arial, sans-serif; color: #172b2c; background: #fff; margin: 20px; line-height: 1.6; }
+    main { max-width: 900px; margin: 0 auto; }
+    a { color: #16666a; }
+    h1, h2, h3 { margin-top: 0; line-height: 1.3; }
+    h1 { font-size: 2rem; margin: 20px 0 16px; }
+    h2 { font-size: 1.5rem; margin-bottom: 14px; }
+    h3 { font-size: 1.15rem; margin: 26px 0 10px; }
+    p { margin: 0 0 16px; }
+    hr { border: 0; border-top: 1px solid #d9e2e2; margin: 16px 0 26px; }
+    section { margin-bottom: 40px; }
+    .eyebrow { color: #4b6b6d; font-size: .85rem; font-weight: 700; margin: 26px 0 6px; }
+    .task-title { margin-bottom: 12px; }
+    figure { margin: 20px 0; text-align: center; }
+    figure img { display: block; width: 70%; max-width: 100%; height: auto; margin: 0 auto; }
+    figcaption, .note { color: #536566; font-size: .95rem; }
+    figcaption { width: 80%; max-width: 100%; margin: 7px auto 0; }
+    .numbers { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+    .number { border-top: 1px solid #d9e2e2; padding: 8px 18px 0 0; min-width: 145px; }
+    .number strong { display: block; font-size: 1.4rem; line-height: 1.3; }
+    .number span { font-size: .9rem; }
+    details { border-top: 1px solid #d9e2e2; padding: 12px 0; }
+    summary { cursor: pointer; font-weight: 700; }
+    .table-wrap { overflow-x: auto; margin: 16px 0 24px; }
+    table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+    th, td { padding: 8px 10px; border: 1px solid #d9e2e2; text-align: left; vertical-align: top; }
+    th { background: #f4f7f7; white-space: nowrap; }
+    td:first-child { white-space: nowrap; }
+    .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin: 16px 0; }
+    .result-card { margin: 0; border: 1px solid #d9e2e2; padding: 8px; text-align: left; min-width: 0; }
+    .result-card img { width: 100%; height: auto; margin: 0; }
+    .result-card figcaption { width: 100%; margin: 8px 0 0; font-size: .88rem; text-align: left; }
+    .result-card figcaption > strong, .result-card figcaption > span { display: block; }
+    .result-card ol { margin: 8px 0 0; padding-left: 22px; }
+    .result-card li { padding: 1px 0; }
+    .result-card li span { color: #536566; }
+    .pair-images { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .pair-images img { width: 100%; height: 150px; object-fit: contain; }
+    .chair-card img { height: 240px; object-fit: contain; }
+    code { background: #f4f7f7; padding: .1em .3em; }
+    @media (max-width: 600px) { body { margin: 16px; } h1 { font-size: 1.7rem; } figure img, figcaption { width: 100%; } .result-grid { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); } }
+  </style>
+</head>
+<body>
+  <main>
+    <a href="projects.html">Back to projects</a>
+    <hr>
+    <h1>Project 1: Visual Representations and CLIP</h1>
+    <h1>Part 1: Understanding a Pretrained Vision Transformer</h1>
+    <h2 class="task-title">Task 1: Image patches and model inputs</h2>
+
+    <section>
+      <p>I resized the image using bilinear interpolation and center-cropped it to a 224 × 224 pixel square. I then divided it into non-overlapping 16 × 16 pixel squares, as shown in Figure 1 below.</p>
+      <figure>
+        <img src="fm-project-1/figures/task1_patches.png" alt="Preprocessed photo of a cheeseburger beside the same photo overlaid with a 14 by 14 patch grid">
+        <figcaption>Figure 1. The grid shows each 16 × 16 pixel patch. There are 196 total patches (14 × 14).</figcaption>
+      </figure>
+      <div class="numbers">
+        <div class="number"><strong>14 × 14</strong><span>patch grid</span></div>
+        <div class="number"><strong>196</strong><span>image patches</span></div>
+        <div class="number"><strong>197</strong><span>tokens after adding CLS</span></div>
+      </div>
+      <p>There are 224 ÷ 16 = 14 patches along each side, so the image yields 14 × 14 = 196 patches. One classification (CLS) token is added, giving the Transformer a sequence of 197 tokens.</p>
+    </section>
+
+    <section>
+      <h2>What the model does with the patches</h2>
+      <p><strong>Patch projection:</strong> Figure 1 shows each patch as a two-dimensional 16 × 16 pixel crop. In the model, each patch is actually flattened into a vector (of length 256) for each channel in the RGB image, resulting in a vector of length 256 x 3 = 768. A learned linear transformation converts that vector into a token vector which is input into the transformer. In this task, the patches remained in two dimensions, while the actual projections input into the transformer are one dimensional vectors. </p>
+      <p><strong>Positional embeddings:</strong> A learned position vector is added to each token so the model can use the patches’ locations after the image becomes a sequence. This sinusoidal embedding allows the model to know the position of each patch, providing spatial information. </p>
+      <p><strong>CLS token:</strong> A learned token is placed at the start of the sequence. The transformer, through training, learns to extract the global representation of the image in the CLS token, allowing individual patch tokens to attend to the CLS token as necessary.</p>
+    </section>
+
+    <section>
+      <h2>Task 2: Predictions on a small image collection</h2>
+      <p>I used 30 of my own images taken on my own phone: 8 labeled banana, 6 cheeseburger, 6 lakeside, 5 pizza, and 5 street sign. The data summary is shown in the table below. </p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>My label</th><th>Images</th><th>Imagenet Class Index</th></tr></thead>
+        <tbody>
+          <tr><td>banana</td><td>8</td><td>banana (954)</td></tr>
+          <tr><td>cheeseburger</td><td>6</td><td>cheeseburger (933)</td></tr>
+          <tr><td>lakeside</td><td>6</td><td>lakeside (975)</td></tr>
+          <tr><td>pizza</td><td>5</td><td>pizza (963)</td></tr>
+          <tr><td>street sign</td><td>5</td><td>street sign (919)</td></tr>
+        </tbody>
+      </table></div>
+      <p>I applied softmax over all 1,000 output scores and report the top five labels and percentages for each image.</p>
+      <h3>Top-one accuracy</h3>
+      <p>Seventeen of 30 images have a top-one ImageNet label matching their assigned category, meaning the top-one accuracy is <strong>56.7%</strong>. While this is a low accuracy, it is relatively good due to the large number of classes. Some images are also very difficult to predict as the true class is not the main object in the image.</p>
+      <figure>
+        <img src="fm-project-1/figures/task1_confusion.png" alt="Confusion matrix with five ground-truth rows and six predicted-label columns. Correct top-one counts are four banana, five cheeseburger, three lakeside, four pizza, and one street sign; the remaining thirteen predictions are other ImageNet labels.">
+        <figcaption>Figure 2. Top-one confusion matrix. “Other ImageNet label” represents any incorrect prediction of the image class.</figcaption>
+      </figure>
+      <h3>Predictions for each image</h3>
+      <p>The image cards below show the label and top-five predictions for every tested image.</p>
+      <!-- TASK2_GALLERY_START -->
+<details open><summary>banana (8 images)</summary>
+<div class="result-grid">
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/banana-1.jpg" alt="banana example banana-1.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>banana-1.jpeg</strong><span>Label: banana</span><ol>
+<li>plunger <span>25.13%</span></li>
+<li>Crock Pot <span>14.48%</span></li>
+<li>table lamp <span>4.11%</span></li>
+<li>teapot <span>3.71%</span></li>
+<li>harp <span>2.61%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/banana-2.jpg" alt="banana example banana-2.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>banana-2.jpeg</strong><span>Label: banana</span><ol>
+<li>banana <span>68.65%</span></li>
+<li>dining table <span>11.43%</span></li>
+<li>file <span>0.58%</span></li>
+<li>orange <span>0.43%</span></li>
+<li>corkscrew <span>0.39%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/banana-3.jpg" alt="banana example banana-3.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>banana-3.jpeg</strong><span>Label: banana</span><ol>
+<li>electric fan <span>96.70%</span></li>
+<li>lampshade <span>0.34%</span></li>
+<li>window shade <span>0.21%</span></li>
+<li>dining table <span>0.20%</span></li>
+<li>chime <span>0.16%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/banana-4.jpg" alt="banana example banana-4.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>banana-4.jpeg</strong><span>Label: banana</span><ol>
+<li>electric fan <span>97.83%</span></li>
+<li>lampshade <span>0.50%</span></li>
+<li>wall clock <span>0.22%</span></li>
+<li>projector <span>0.11%</span></li>
+<li>hair slide <span>0.06%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/banana-5.jpg" alt="banana example banana-5.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>banana-5.jpeg</strong><span>Label: banana</span><ol>
+<li>banana <span>40.91%</span></li>
+<li>file <span>18.45%</span></li>
+<li>chest <span>6.44%</span></li>
+<li>lighter <span>3.73%</span></li>
+<li>cassette <span>1.69%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/banana-6.jpg" alt="banana example banana-6.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>banana-6.jpeg</strong><span>Label: banana</span><ol>
+<li>banana <span>76.66%</span></li>
+<li>crossword puzzle <span>5.76%</span></li>
+<li>slug <span>5.51%</span></li>
+<li>orange <span>0.35%</span></li>
+<li>rule <span>0.35%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/banana-7.jpg" alt="banana example banana-7.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>banana-7.jpeg</strong><span>Label: banana</span><ol>
+<li>coffeepot <span>48.63%</span></li>
+<li>banana <span>22.27%</span></li>
+<li>tray <span>5.53%</span></li>
+<li>teapot <span>2.94%</span></li>
+<li>dining table <span>2.44%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/banana-8.jpg" alt="banana example banana-8.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>banana-8.jpeg</strong><span>Label: banana</span><ol>
+<li>banana <span>85.91%</span></li>
+<li>orange <span>0.27%</span></li>
+<li>ear <span>0.11%</span></li>
+<li>corn <span>0.10%</span></li>
+<li>grocery store <span>0.08%</span></li>
+</ol></figcaption></figure>
+</div></details>
+<details open><summary>cheeseburger (6 images)</summary>
+<div class="result-grid">
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/cheeseburger-1.jpg" alt="cheeseburger example cheeseburger-1.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>cheeseburger-1.jpeg</strong><span>Label: cheeseburger</span><ol>
+<li>cheeseburger <span>86.96%</span></li>
+<li>hotdog <span>0.13%</span></li>
+<li>meat loaf <span>0.10%</span></li>
+<li>schipperke <span>0.06%</span></li>
+<li>abaya <span>0.05%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/cheeseburger-2.jpg" alt="cheeseburger example cheeseburger-2.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>cheeseburger-2.jpeg</strong><span>Label: cheeseburger</span><ol>
+<li>cheeseburger <span>87.47%</span></li>
+<li>meat loaf <span>0.09%</span></li>
+<li>bagel <span>0.06%</span></li>
+<li>bloodhound <span>0.05%</span></li>
+<li>golden retriever <span>0.05%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/cheeseburger-3.jpg" alt="cheeseburger example cheeseburger-3.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>cheeseburger-3.jpeg</strong><span>Label: cheeseburger</span><ol>
+<li>cheeseburger <span>89.00%</span></li>
+<li>plate <span>0.17%</span></li>
+<li>mashed potato <span>0.17%</span></li>
+<li>bakery <span>0.11%</span></li>
+<li>bagel <span>0.11%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/cheeseburger-4.jpg" alt="cheeseburger example cheeseburger-4.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>cheeseburger-4.jpeg</strong><span>Label: cheeseburger</span><ol>
+<li>cheeseburger <span>89.40%</span></li>
+<li>hotdog <span>0.16%</span></li>
+<li>acorn squash <span>0.11%</span></li>
+<li>meat loaf <span>0.06%</span></li>
+<li>cocktail shaker <span>0.06%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/cheeseburger-5.jpg" alt="cheeseburger example cheeseburger-5.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>cheeseburger-5.jpeg</strong><span>Label: cheeseburger</span><ol>
+<li>packet <span>10.05%</span></li>
+<li>shoe shop <span>7.03%</span></li>
+<li>confectionery <span>5.97%</span></li>
+<li>piggy bank <span>3.95%</span></li>
+<li>burrito <span>3.08%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/cheeseburger-6.jpg" alt="cheeseburger example cheeseburger-6.PNG" width="280" height="210" loading="lazy">
+<figcaption><strong>cheeseburger-6.PNG</strong><span>Label: cheeseburger</span><ol>
+<li>cheeseburger <span>89.24%</span></li>
+<li>hotdog <span>0.08%</span></li>
+<li>pretzel <span>0.05%</span></li>
+<li>meat loaf <span>0.05%</span></li>
+<li>restaurant <span>0.05%</span></li>
+</ol></figcaption></figure>
+</div></details>
+<details open><summary>lakeside (6 images)</summary>
+<div class="result-grid">
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/lakeside-1.jpg" alt="lakeside example lakeside-1.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>lakeside-1.jpeg</strong><span>Label: lakeside</span><ol>
+<li>lakeside <span>79.73%</span></li>
+<li>valley <span>3.57%</span></li>
+<li>sandbar <span>1.28%</span></li>
+<li>dam <span>1.02%</span></li>
+<li>breakwater <span>0.51%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/lakeside-2.jpg" alt="lakeside example lakeside-2.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>lakeside-2.jpeg</strong><span>Label: lakeside</span><ol>
+<li>lakeside <span>79.24%</span></li>
+<li>canoe <span>7.60%</span></li>
+<li>valley <span>0.67%</span></li>
+<li>boathouse <span>0.62%</span></li>
+<li>sandbar <span>0.38%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/lakeside-3.jpg" alt="lakeside example lakeside-3.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>lakeside-3.jpeg</strong><span>Label: lakeside</span><ol>
+<li>valley <span>65.46%</span></li>
+<li>castle <span>14.13%</span></li>
+<li>alp <span>4.82%</span></li>
+<li>lakeside <span>3.28%</span></li>
+<li>cliff <span>2.14%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/lakeside-4.jpg" alt="lakeside example lakeside-4.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>lakeside-4.jpeg</strong><span>Label: lakeside</span><ol>
+<li>breakwater <span>38.22%</span></li>
+<li>plastic bag <span>8.59%</span></li>
+<li>promontory <span>8.58%</span></li>
+<li>seashore <span>6.95%</span></li>
+<li>pier <span>4.02%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/lakeside-5.jpg" alt="lakeside example lakeside-5.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>lakeside-5.jpeg</strong><span>Label: lakeside</span><ol>
+<li>lakeside <span>72.56%</span></li>
+<li>canoe <span>8.67%</span></li>
+<li>boathouse <span>1.73%</span></li>
+<li>castle <span>1.23%</span></li>
+<li>balloon <span>1.09%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/lakeside-6.jpg" alt="lakeside example lakeside-6.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>lakeside-6.jpeg</strong><span>Label: lakeside</span><ol>
+<li>sandbar <span>94.86%</span></li>
+<li>lakeside <span>0.19%</span></li>
+<li>seashore <span>0.13%</span></li>
+<li>breakwater <span>0.10%</span></li>
+<li>West Highland white terrier <span>0.04%</span></li>
+</ol></figcaption></figure>
+</div></details>
+<details open><summary>pizza (5 images)</summary>
+<div class="result-grid">
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/pizza-1.jpg" alt="pizza example pizza-1.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>pizza-1.jpeg</strong><span>Label: pizza</span><ol>
+<li>pizza <span>87.13%</span></li>
+<li>carbonara <span>0.55%</span></li>
+<li>chocolate sauce <span>0.10%</span></li>
+<li>plate <span>0.08%</span></li>
+<li>zucchini <span>0.07%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/pizza-2.jpg" alt="pizza example pizza-2.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>pizza-2.jpeg</strong><span>Label: pizza</span><ol>
+<li>pizza <span>70.81%</span></li>
+<li>meat loaf <span>1.00%</span></li>
+<li>hotdog <span>0.74%</span></li>
+<li>dough <span>0.63%</span></li>
+<li>king crab <span>0.62%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/pizza-3.jpg" alt="pizza example pizza-3.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>pizza-3.jpeg</strong><span>Label: pizza</span><ol>
+<li>pizza <span>41.85%</span></li>
+<li>spatula <span>37.22%</span></li>
+<li>cleaver <span>2.52%</span></li>
+<li>meat loaf <span>1.04%</span></li>
+<li>potpie <span>0.69%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/pizza-4.jpg" alt="pizza example pizza-4.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>pizza-4.jpeg</strong><span>Label: pizza</span><ol>
+<li>carbonara <span>37.07%</span></li>
+<li>pizza <span>23.57%</span></li>
+<li>plate <span>6.43%</span></li>
+<li>tray <span>3.38%</span></li>
+<li>restaurant <span>2.04%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/pizza-5.jpg" alt="pizza example pizza-5.JPG" width="280" height="210" loading="lazy">
+<figcaption><strong>pizza-5.JPG</strong><span>Label: pizza</span><ol>
+<li>pizza <span>79.64%</span></li>
+<li>wok <span>0.35%</span></li>
+<li>dough <span>0.28%</span></li>
+<li>honeycomb <span>0.24%</span></li>
+<li>spatula <span>0.14%</span></li>
+</ol></figcaption></figure>
+</div></details>
+<details open><summary>street sign (5 images)</summary>
+<div class="result-grid">
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/street-sign-1.jpg" alt="street sign example street-sign-1.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>street-sign-1.jpeg</strong><span>Label: street sign</span><ol>
+<li>traffic light <span>60.45%</span></li>
+<li>street sign <span>24.80%</span></li>
+<li>pole <span>1.09%</span></li>
+<li>obelisk <span>0.90%</span></li>
+<li>pedestal <span>0.32%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/street-sign-2.jpg" alt="street sign example street-sign-2.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>street-sign-2.jpeg</strong><span>Label: street sign</span><ol>
+<li>street sign <span>47.34%</span></li>
+<li>barbershop <span>6.26%</span></li>
+<li>digital clock <span>5.98%</span></li>
+<li>traffic light <span>3.06%</span></li>
+<li>mailbox <span>1.90%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/street-sign-3.jpg" alt="street sign example street-sign-3.jpg" width="280" height="210" loading="lazy">
+<figcaption><strong>street-sign-3.jpg</strong><span>Label: street sign</span><ol>
+<li>rapeseed <span>76.70%</span></li>
+<li>street sign <span>5.24%</span></li>
+<li>alp <span>1.46%</span></li>
+<li>valley <span>0.72%</span></li>
+<li>unicycle <span>0.67%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/street-sign-4.jpg" alt="street sign example street-sign-4.jpeg" width="280" height="210" loading="lazy">
+<figcaption><strong>street-sign-4.jpeg</strong><span>Label: street sign</span><ol>
+<li>confectionery <span>20.67%</span></li>
+<li>bakery <span>13.90%</span></li>
+<li>restaurant <span>8.49%</span></li>
+<li>toyshop <span>7.13%</span></li>
+<li>carousel <span>6.28%</span></li>
+</ol></figcaption></figure>
+<figure class="result-card">
+<img src="fm-project-1/figures/task1_thumbnails/street-sign-5.jpg" alt="street sign example street-sign-5.PNG" width="280" height="210" loading="lazy">
+<figcaption><strong>street-sign-5.PNG</strong><span>Label: street sign</span><ol>
+<li>umbrella <span>46.69%</span></li>
+<li>unicycle <span>11.92%</span></li>
+<li>street sign <span>10.47%</span></li>
+<li>cinema <span>1.69%</span></li>
+<li>restaurant <span>0.91%</span></li>
+</ol></figcaption></figure>
+</div></details>
+      <!-- TASK2_GALLERY_END -->
+      <p>The model does well when it is clear what the main object in the image is. Even for banana-2.jpg, while the dining table takes up most of the image, because the banana is in the middle an unobstructed, the top choice is banana. However, when the banana was unclear, like in banana-1.jpg and banana-3.jpg, the model attempted to classify another part of the image that was more prominent.</p>
+      <p>Further, the model predicted burger in all cases except when the burger was wrapped in the paper it typically comes in from a fast food restaurant. This suggests that the model is not able to infer that there is a burger in it, even when the wrapping paper clearly says 'Whopper'.</p>
+      <p>Stree sign is also very difficult to predict. In fact, the one picture that is the most clearly not a street sign (it is just a sign on a fence or house) is the only one that is classified as a street sign. This is likely because it is the only clear object in the image, while in all the other ones, there are other objects in the image which the model attempts to classify instead of the sign.</p>
+    </section>
+
+    <section>
+        <h1>Part 2: CLIP for Image–Text Matching and Zero-Shot Classification</h1>
+        <h2 class="task-title">Task 1: Implement the similarity calculation</h2>
+
+        <p>I reused the same 30 images and five categories with OpenAI CLIP ViT-B/32. The candidate texts were 'a photo of a banana', 'a photo of a cheeseburger', 'a photo of a lakeside', 'a photo of a pizza', and 'a photo of a street sign'. These texts are the only choices for this task's softmax and predicted category.</p>
+
+        <h3>Similarity heatmap</h3>
+        <p>The figure shows all 30 images, grouped by their assigned category. The first five columns show cosine similarity with each candidate text, shortened to category names on the axis. Their color scale runs from the smallest to the largest cosine similarity across all 30 images and five texts. The rightmost column shows the highest-scoring text's softmax probability after applying CLIP's learned scale of 100. Green means at least 50%; red means below 50%. This shows that all 30 images have the highest cosine similarity with the correct class compared to the other 4 classes. </p>
+        <figure>
+            <img src="fm-project-1/figures/clip_similarity_heatmap.png">
+            <figcaption>Figure 3. CLIP cosine similarities and softmax probabilities for all 30 images. Each row's largest cosine identifies its predicted category. The rightmost column is green at or above 50% and red below 50%; this color marks confidence among the five texts. Accuracy is 100%.</figcaption>
+        </figure>
+        <p>Clip multiplies the cosine similarity by a learned scale to produce a logit and softmax converts the logits into probabilities. Softmax probabilities depned on the candidate texts being compared because if they are all very small, the model will have high confidence (high probability), while higher, evenly distributed candidate logits will lead to lower confidence (low softmax probability).</p>
+
+    </section>
+
+    <section>
+        <h2 class="task-title">Task 2: Compare prompt wording</h2>
+        <p>I tested three text templates for each of the same five categories and 30 images as shown in the table below. A smaller mean cross entropy means that the prompt assigned higher probability to the correct category, indicating better performance, in general.</p>
+
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Prompt template</th><th>Matching predictions</th><th>Accuracy</th><th>Mean cross entropy</th></tr></thead>
+                <tbody>
+                    <tr><td>{category}</td><td>30 / 30</td><td>100.0%</td><td>0.0447</td></tr>
+                    <tr><td>an image which has {category} in it</td><td>27 / 30</td><td>90.0%</td><td>0.2284</td></tr>
+                    <tr><td>a photo with a {category}</td><td>28 / 30</td><td>93.3%</td><td>0.1094</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <figure>
+            <img src="fm-project-1/figures/clip_task2_confusions.png" alt="Three five-by-five confusion matrices for the three CLIP prompt templates. The category-only prompt has 30 matching predictions; the other prompts have 27 and 28.">
+            <figcaption>Figure 4. Confusion matrices for the three templates. Rows are assigned image labels and columns are CLIP predictions among the five candidate texts. The matrices share a count color scale.</figcaption>
+        </figure>
+        <p>The simple {category} prompt had 100% accuracy, while the other two, which add words to the prompt, got multiple predictions wrong, but were still very accurate.</p>
+        <p>Changing the prompt does not the change the model weights, just the input text. If the embedding of the text changes, it is possible that it matches with the image embedding better or worse. This is the point of studying the effect of prompt wording on performance. </p>
+        <p>This model has higher accuracy, but that is because it compares embeddings to only the 5 classes in the subset, instead of the 1000 classes in imagenet. If the full 1000 class labels were used, then a better comparison could be made. </p>
+        <p>For banana-3.jpg and banana-4.jpg, where the banana is not the main object in the image. Therefore, adding words to the prompt which are less strict than simply {category} makes it possible that the model is less confident that there is a banana relative to other possible items. So, relatively, the confidence that the image has a banana in it is lower, causing the model to predict a different class. </p>
+
+
+        <section>
+            <h2 class="task-title">Task 3: Explore the representation space</h2>
+            <p>I dot product of every pair of the 30 images. This gives a 30 × 30 image–image cosine similarity matrix. A larger value means that CLIP placed two photos closer together in its image representation. The diagonal is 1 because each image is compared with itself.</p>
+            <figure>
+                <a href="fm-project-1/figures/clip_task3_image_similarity.png"><img src="fm-project-1/figures/clip_task3_image_similarity.png" alt="A 30 by 30 CLIP image-image cosine similarity heatmap. White lines group banana, cheeseburger, lakeside, pizza, and street sign images. Bright blocks show high within-category similarity, with some bright cheeseburger-pizza cross-category cells."></a>
+                <figcaption>Figure 5. Image–image cosine similarities. Each category is labeled once at the center of its block, and white lines separate the filename-assigned categories. Each small cell still represents one image pair.</figcaption>
+            </figure>
+
+            <h3>Similar Image Pairs</h3>
+            <p>Image pairs with higher similarity are shown below. Some pairs are within the same class and it is clear why they are similar. Some pairs are from different classes, and the similarity it lower, but still makes sense. For example, the cheeseburger and pizza pictures are both taken at a restaurant, and the street sign and lakeside pictures are both taken in a city (they are actually both taken in the same city, unlike the other street sign and lakeside images) In both of these cases, the background is likely causes much of the similarities. </p>
+            <div class="result-grid">
+                <figure class="result-card">
+                    <div class="pair-images">
+                        <img src="fm-project-1/figures/task1_thumbnails/banana-2.jpg" alt="banana-2 on a wooden table">
+                        <img src="fm-project-1/figures/task1_thumbnails/banana-6.jpg" alt="banana-6 on a wooden table">
+                    </div><figcaption><strong>Banana-2 and banana-6 · 0.941</strong>Both show a single banana on a wooden table, with a similar viewpoint and composition.</figcaption>
+                </figure>
+                <figure class="result-card">
+                    <div class="pair-images">
+                        <img src="fm-project-1/figures/task1_thumbnails/lakeside-2.jpg" alt="lakeside-2 with water and sky reflection">
+                        <img src="fm-project-1/figures/task1_thumbnails/lakeside-5.jpg" alt="lakeside-5 with water and sky reflection">
+                    </div><figcaption><strong>Lakeside-2 and lakeside-5 · 0.933</strong>Both are broad water views with a dark tree line and warm sky reflected on the water.</figcaption>
+                </figure>
+                <figure class="result-card">
+                    <div class="pair-images">
+                        <img src="fm-project-1/figures/task1_thumbnails/banana-3.jpg" alt="banana-3 photo showing a ceiling fan">
+                        <img src="fm-project-1/figures/task1_thumbnails/banana-4.jpg" alt="banana-4 photo showing a ceiling fan">
+                    </div><figcaption><strong>Banana-3 and banana-4 · 0.923</strong>These filename-assigned banana photos both show ceiling fans. Their high similarity reflects visible content, despite the category name.</figcaption>
+                </figure>
+                <figure class="result-card">
+                    <div class="pair-images">
+                        <img src="fm-project-1/figures/task1_thumbnails/pizza-2.jpg" alt="pizza-2 served on a table">
+                        <img src="fm-project-1/figures/task1_thumbnails/cheeseburger-6.jpg" alt="cheeseburger-6 served with fries">
+                    </div><figcaption><strong>Pizza-2 and cheeseburger-6 · 0.743</strong>This is the highest cross-category pair. Both show prepared food prominently in a dining setting, with warm brown and orange tones.</figcaption>
+                </figure>
+                <figure class="result-card">
+                    <div class="pair-images">
+                        <img src="fm-project-1/figures/task1_thumbnails/street-sign-1.jpg" alt="street-sign-1 in an outdoor urban scene">
+                        <img src="fm-project-1/figures/task1_thumbnails/lakeside-4.jpg" alt="lakeside-4 with shoreline and buildings">
+                    </div><figcaption><strong>Street-sign-1 and lakeside-4 · 0.673</strong>These different categories share an outdoor view with buildings, trees, and a large area of sky.</figcaption>
+                </figure>
+            </div>
+
+        </section>
+        <section>
+            <h1>Part 3: A Controlled Study of CLIP’s Limitations</h1>
+            <h2 class="task-title">Task 1: State a hypothesis and construct comparisons</h2>
+            <p>I photographed the same chair and added one banana at a time, up to 14 total bananas. I wanted to study the problem of if a banana is present in the image, but another object is more dominant, how many bananas would it take until the model classified the image as 'banana' instead of, in this case, 'chair'. I used CLIP to compare image embeddings to text embeddings for 'chair' and 'banana'. The image-text cosine similarity of each image with 'chair' and 'banana' text embeddings are shown in the figure below, where the number of bananas is shown on the x axis. </p>
+
+            <figure>
+                <a href="fm-project-1/figures/chair_banana_cosine.png"><img src="fm-project-1/figures/chair_banana_cosine.png" alt="One line chart of CLIP image-text cosine similarity for banana and chair across photos with zero through fourteen bananas. The banana line rises above the chair line at seven and fourteen bananas."></a>
+                <figcaption>Figure 6. CLIP image–text cosine similarity for chair image with x number of bananas on the chair, against the text embeddings for “banana” and “chair.”</figcaption>
+            </figure>
+
+            <h2 class="task-title">Task 2: Evaluate and Visualize</h2>
+            <p>
+                While there is noise in the results, there is a clear increase in similarity with 'banana' as the number of bananas increase, while the similarity with 'chair' is relatively steady. This suggests that the image embedding can include information for both banana and chair, without having to represent one over the other. However, because we are asking the model for just one class, it chooses the one with highest similarity, which is not clear after about 7 bananas are in the image.
+                <h3>Chair and banana scores for every image</h3>
+            <p>The images, as well as the cosine similarity with each class, are shown below.</p>
+            <!-- CHAIR_BANANA_GALLERY_START -->
+            <div class="result-grid">
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-0.jpeg" alt="Original photo with 0 bananas" loading="lazy"><figcaption><strong>0 bananas · chair-banana-0.jpeg</strong><ol><li>chair <span>0.3035</span></li><li>banana <span>0.2142</span></li></ol></figcaption></figure>
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-1.jpeg" alt="Original photo with 1 banana" loading="lazy"><figcaption><strong>1 banana · chair-banana-1.jpeg</strong><ol><li>chair <span>0.2819</span></li><li>banana <span>0.2273</span></li></ol></figcaption></figure>
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-2.jpeg" alt="Original photo with 2 bananas" loading="lazy"><figcaption><strong>2 bananas · chair-banana-2.jpeg</strong><ol><li>chair <span>0.2912</span></li><li>banana <span>0.2591</span></li></ol></figcaption></figure>
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-3.jpeg" alt="Original photo with 3 bananas" loading="lazy"><figcaption><strong>3 bananas · chair-banana-3.jpeg</strong><ol><li>chair <span>0.2901</span></li><li>banana <span>0.2660</span></li></ol></figcaption></figure>
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-4.jpeg" alt="Original photo with 4 bananas" loading="lazy"><figcaption><strong>4 bananas · chair-banana-4.jpeg</strong><ol><li>chair <span>0.2700</span></li><li>banana <span>0.2447</span></li></ol></figcaption></figure>
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-5.jpeg" alt="Original photo with 5 bananas" loading="lazy"><figcaption><strong>5 bananas · chair-banana-5.jpeg</strong><ol><li>chair <span>0.2751</span></li><li>banana <span>0.2704</span></li></ol></figcaption></figure>
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-6.jpeg" alt="Original photo with 6 bananas" loading="lazy"><figcaption><strong>6 bananas · chair-banana-6.jpeg</strong><ol><li>chair <span>0.2740</span></li><li>banana <span>0.2736</span></li></ol></figcaption></figure>
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-7.jpeg" alt="Original photo with 7 bananas" loading="lazy"><figcaption><strong>7 bananas · chair-banana-7.jpeg</strong><ol><li>banana <span>0.2908</span></li><li>chair <span>0.2828</span></li></ol></figcaption></figure>
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-8.jpeg" alt="Original photo with 8 bananas" loading="lazy"><figcaption><strong>8 bananas · chair-banana-8.jpeg</strong><ol><li>chair <span>0.2797</span></li><li>banana <span>0.2722</span></li></ol></figcaption></figure>
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-9.jpeg" alt="Original photo with 9 bananas" loading="lazy"><figcaption><strong>9 bananas · chair-banana-9.jpeg</strong><ol><li>chair <span>0.2847</span></li><li>banana <span>0.2679</span></li></ol></figcaption></figure>
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-10.jpeg" alt="Original photo with 10 bananas" loading="lazy"><figcaption><strong>10 bananas · chair-banana-10.jpeg</strong><ol><li>chair <span>0.2778</span></li><li>banana <span>0.2706</span></li></ol></figcaption></figure>
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-11.jpeg" alt="Original photo with 11 bananas" loading="lazy"><figcaption><strong>11 bananas · chair-banana-11.jpeg</strong><ol><li>chair <span>0.2927</span></li><li>banana <span>0.2685</span></li></ol></figcaption></figure>
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-12.jpeg" alt="Original photo with 12 bananas" loading="lazy"><figcaption><strong>12 bananas · chair-banana-12.jpeg</strong><ol><li>chair <span>0.2865</span></li><li>banana <span>0.2706</span></li></ol></figcaption></figure>
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-13.jpeg" alt="Original photo with 13 bananas" loading="lazy"><figcaption><strong>13 bananas · chair-banana-13.jpeg</strong><ol><li>chair <span>0.2793</span></li><li>banana <span>0.2757</span></li></ol></figcaption></figure>
+                <figure class="result-card chair-card"><img src="fm-project-1/task_1_images/chair-banana-14.jpeg" alt="Original photo with 14 bananas" loading="lazy"><figcaption><strong>14 bananas · chair-banana-14.jpeg</strong><ol><li>banana <span>0.3049</span></li><li>chair <span>0.2790</span></li></ol></figcaption></figure>
+            </div>
+            <!-- CHAIR_BANANA_GALLERY_END -->
+
+            <h2 class="task-title">Task 3: Testing one explanation</h2>
+            <p>Because the images with bananas and the chair have higher similarity with both 'banana' and 'chair' embeddings, it is likely that the image embeddings include both objects. Therefore, I included a third class, 'chair and banana', and calculate the similarity of each image embedding with the embedding of this text. This is compared to the original class labels in Figure 7. The cosine similarity with this class is higher than either individual class whenever at least one banana was in the image.</p>
+            <figure>
+                <a href="fm-project-1/figures/chair_banana_three_texts.png"><img src="fm-project-1/figures/chair_banana_three_texts.png" alt="Three-line chart of CLIP image-text cosine similarity for banana, chair, and chair and banana across the fifteen photos. The combined phrase is highest for all counts except zero."></a>
+                <figcaption>Figure 7. Cosine similarities for “banana,” “chair,” and “chair and banana.” The combined phrase scores highest for all images with at least one banana and a chair.</figcaption>
+            </figure>
+            <p>This confirms the hypothesis that the image embedding includes information about both chair and banana, but the class labels are too restrictive to predict accurately. This is a shortfall of CLIP, where class labels are limited. While they can be artificially made to be more complicated, it is not possible to include all combinations of objects. Therefore, a model which can generate the caption for the image, like LLaVA, may be more suitable for this kind of task.</p>
+
+        </section>
+  </main>
+</body>
+</html>
