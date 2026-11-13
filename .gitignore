@@ -4,3 +4,8 @@
 /fm-project-1/imagenet_vit_b_16_v1_labels.txt
 /fm-project-1/figures/clip_task2_cross_entropy.png
 /tools/import_fm_project.py
+
+# Publish only the rendered Project 2 report and figures.
+/fm-project-2/*.py
+/fm-project-2/data/
+/fm-project-2/submission/

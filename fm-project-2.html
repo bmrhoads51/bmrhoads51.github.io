@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project 2: Flow Matching and Creative Point-Cloud Generation</title>
+  <style>
+    :root { color-scheme: light; }
+    body { max-width: 900px; margin: 0 auto; padding: 36px 20px 70px; background: #fbfaf7; color: #242a32; font: 17px/1.55 system-ui, sans-serif; }
+    h1, h2 { line-height: 1.2; }
+    h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.2em; }
+    h2 { border-top: 1px solid #d8dadc; padding-top: 1.1em; margin-top: 2.5em; }
+    .eyebrow { color: #6d5989; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+    .lede { color: #53606d; font-size: 1.12rem; }
+    figure { margin: 28px 0; }
+    img { width: 100%; height: auto; border: 1px solid #e1e2e3; border-radius: 8px; background: white; }
+    figcaption { margin-top: 8px; color: #56616d; font-size: 0.92rem; }
+    .math { display: block; overflow-x: auto; padding: 14px 18px; border-left: 4px solid #8a69a5; background: #f0ecf3; font-family: Cambria, Georgia, serif; font-size: 1.15rem; }
+    code { background: #efeeee; padding: 0.1em 0.3em; border-radius: 3px; }
+    a { color: #64458a; }
+    table { border-collapse: collapse; width: 100%; margin: 20px 0; font-size: 0.94rem; }
+    th, td { border-bottom: 1px solid #d8dadc; padding: 9px 12px; text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    .animation img { max-width: 700px; display: block; margin: 0 auto; }
+    figure.wide { width: min(1400px, calc(100vw - 40px)); position: relative; left: 50%; transform: translateX(-50%); }
+    .creep-demo { display: grid; grid-template-columns: minmax(200px, 1fr) minmax(230px, 1.3fr); gap: 20px; align-items: center; padding: 18px; border: 1px solid #d8dadc; border-radius: 8px; background: #fff; }
+    .creep-demo svg { width: 100%; height: auto; }
+    .creep-bar { transform-box: fill-box; transform-origin: top center; animation: stretch 8s ease-in-out infinite; }
+    .creep-weight { animation: drop 8s ease-in-out infinite; }
+    @keyframes stretch { 0%, 12% { transform: scaleY(1); } 88%, 100% { transform: scaleY(1.25); } }
+    @keyframes drop { 0%, 12% { transform: translateY(0); } 88%, 100% { transform: translateY(32px); } }
+    @media (max-width: 620px) { .creep-demo { grid-template-columns: 1fr; } }
+    @media (prefers-reduced-motion: reduce) { .creep-bar, .creep-weight { animation: none; } }
+  </style>
+</head>
+<body>
+  <nav><a href="projects.html">Back to projects</a></nav>
+  <header>
+    <div class="eyebrow">Foundation Models · Project 2</div>
+    <h1>Project 2: Flow Matching and Creative Point-Cloud Generation</h1>
+    <p class="lede">Parts 1–3 · A simple spiral flow, conditional creep point clouds, and reflow</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Part 1: Learn a 2D Flow from Scratch</h2>
+      <h3>Task 1: Prepare the source, target, and training pairs</h3>
+      <p>I sampled 2,000 source points independently from a standard two-dimensional Gaussian, so each coordinate has mean 0 and standard deviation 1. My simple target is a spiral.</p>
+
+      <figure>
+        <img src="fm-project-2/figures/task1_distributions.png" alt="Scatter plots of Gaussian source points and a spiral target, on matching axes.">
+        <figcaption>Figure 1. Source noise and the simple target distribution. The same axis limits and aspect ratio make their scales directly comparable.</figcaption>
+      </figure>
+
+      <p>Each source sample was paired with an independently drawn target sample. For each pair, I sampled a separate time uniformly from [0, 1]. The interpolated location and its target velocity are</p>
+      <div class="math">x<sub>t</sub> = (1 − t)x<sub>0</sub> + tx<sub>1</sub>, &nbsp;&nbsp; v = x<sub>1</sub> − x<sub>0</sub>.</div>
+
+      <figure>
+        <img src="fm-project-2/figures/task1_paths.png" alt="Twelve straight paths from blue Gaussian points to orange target points, with purple interpolation points and a faint spiral target in the background.">
+        <figcaption>Figure 2. Example training pairs over the faint full spiral target. Blue marks each source, orange marks its paired target, and purple marks the location at a separately sampled time. Gray arrows show the path direction.</figcaption>
+      </figure>
+
+      <p>Each training path is straight because its position is a linear interpolation between two fixed endpoints. Differentiating with respect to time gives dx<sub>t</sub>/dt = x<sub>1</sub> − x<sub>0</sub>, which does not depend on t. Different pairs generally have different velocities.</p>
+
+      <h3>Task 2: Implement and train the velocity model</h3>
+      <p>The unconditioned model takes the two coordinates of an interpolated point and its flow time, then predicts two velocity components. Its training target is the paired endpoint difference x<sub>1</sub> − x<sub>0</sub>. I used a three-hidden-layer PyTorch MLP with width 128 and SiLU activations (33,794 parameters), Adam at learning rate 0.001, batch size 256, seed 7, and 12,000 steps. Training took 41.9 seconds on the CPU with two threads.</p>
+      <figure>
+        <img src="fm-project-2/figures/part1_training_loss.png" alt="Training and independent validation velocity loss for the spiral model over 12000 steps.">
+        <figcaption>Figure 3. The independent-pair validation velocity MSE decreased from 1.988 after step 1 to 1.406 after step 12,000. The loss does not approach zero, because the trajectories are curved, especially at the end of the trajectory, so this causes a difference between the predicted velocity and the velocity based on the initial and endpoints.</figcaption>
+      </figure>
+
+      <h3>Task 3: Generate new points with the learned field</h3>
+      <p>I sampled 2,000 fresh Gaussian source points and applied 50 forward Euler steps, x<sub>k+1</sub> = x<sub>k</sub> + v<sub>θ</sub>(x<sub>k</sub>, t<sub>k</sub>)/50.</p>
+      <figure class="wide">
+        <img src="fm-project-2/figures/part1_snapshots.png" alt="Five snapshots of fresh Gaussian points being transported into a spiral.">
+        <figcaption>Figure 4. The same 2,000 generated particles at flow times 0, 0.2, 0.5, 0.8, and 1. The cloud gradually forms the spiral.</figcaption>
+      </figure>
+      <figure>
+        <img src="fm-project-2/figures/part1_final.png" alt="Independent target spiral sample beside a generated spiral point cloud.">
+        <figcaption>Figure 5. A target sample and the model's generated endpoints on matching axes. The generated spiral has additional noise, but the general shape matches the target.</figcaption>
+      </figure>
+      <figure class="wide">
+        <img src="fm-project-2/figures/part1_velocity_fields.png" alt="Predicted velocity arrows across a two-dimensional grid at three flow times.">
+        <figcaption>Figure 6. Predicted velocity fields at flow times 0, 0.5, and 0.9. As flow time increases, flow directions become more detailed and drive points more to a specific location.</figcaption>
+      </figure>
+      <figure>
+        <img src="fm-project-2/figures/part1_trajectories.png" alt="Curved trajectories of 15 generated particles, from fresh noise to their generated endpoints.">
+        <figcaption>Figure 7. Fifteen learned sampling trajectories. Unlike the straight, randomly paired paths in Figure 2, these paths can bend because each Euler step uses the model's velocity at a new location and time.</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2>Part 2: Create and Analyze Your Own Animated Demo</h2>
+      <h3>Task 1: Choose a creative target</h3>
+      <h4>A quick introduction to creep</h4>
+      <p>Creep is a material's gradual deformation while it is held under load, often at an elevated temperature. Imagine hanging a weight from a metal specimen and keeping the weight and temperature steady. The specimen can continue to lengthen over time even though the load has not increased. This slow stretching matters for hot components that must hold their shape for years.</p>
+      <figure>
+        <div class="creep-demo" role="img" aria-label="Schematic animation of a weighted metal specimen slowly lengthening, beside strain and strain-rate sketches over time.">
+          <svg viewBox="0 0 250 260" aria-hidden="true">
+            <rect x="35" y="22" width="180" height="16" rx="3" fill="#424c58"/>
+            <rect x="105" y="38" width="40" height="128" rx="7" fill="#6691a8" class="creep-bar"/>
+            <g class="creep-weight"><rect x="100" y="166" width="50" height="15" fill="#424c58"/><path d="M75 181 H175 L160 222 H90 Z" fill="#a87750"/></g>
+            <path d="M187 43 V166 M181 43 H193 M181 166 H193" stroke="#ae6d5c" stroke-width="2" fill="none"/>
+            <text x="197" y="109" font-size="13" fill="#6a5960">length</text>
+            <text x="60" y="248" font-size="14" fill="#30343b">Constant load ↓</text>
+          </svg>
+          <svg viewBox="0 0 330 260" aria-hidden="true">
+            <text x="31" y="22" font-size="15" font-weight="600" fill="#30343b">What we measure</text>
+            <path d="M40 35 V116 H315 M40 142 V223 H315" stroke="#52606d" stroke-width="2" fill="none"/>
+            <path d="M42 110 Q75 75 135 67 Q210 60 270 35 Q288 28 313 25" stroke="#6691a8" stroke-width="3" fill="none"/>
+            <path d="M42 161 Q75 184 135 190 Q210 190 270 175 Q292 160 313 146" stroke="#c27952" stroke-width="3" fill="none"/>
+            <text x="45" y="54" font-size="12" fill="#466e84">strain = amount stretched</text>
+            <text x="45" y="157" font-size="12" fill="#a45f39">strain rate = stretching speed</text>
+            <text x="219" y="247" font-size="13" fill="#30343b">elapsed time →</text>
+          </svg>
+        </div>
+      </figure>
+      <p><strong>Strain</strong> describes how much the specimen has stretched relative to its original length. <strong>Strain rate</strong> describes how quickly that stretching is happening: it is the slope of the strain-versus-time curve. A creep-rate curve plots this speed against elapsed physical time. A falling rate means stretching slows; a rising rate means it accelerates. The simulation data below use the positive axial <em>plastic</em> strain-rate component, plotted on logarithmic axes because the times and rates span large ranges.</p>
+      <p>For the creative extension, the target is a distribution of points along 110 simulated creep histories from a model I am using in a research project. The actual creep values are not shown by removing the number labels from the x and y axes. Each point has two plotted coordinates: log<sub>10</sub>(elapsed time in seconds) and log<sub>10</sub>(positive axial plastic strain rate in s<sup>−1</sup>). Each history also has an applied stress and temperature, which are supplied as conditioning inputs to the velocity model.</p>
+      <figure>
+        <img src="fm-project-2/figures/g91_example_curve.png" alt="One simulated creep-rate curve showing a declining rate followed by acceleration.">
+        <figcaption>Figure 8. One example simulation history. The orange line connects all 200 interpolated log-time target points; blue markers show every fourth point. A lower vertical value means slower plastic deformation. The rate decreases and then accelerates late in the simulation.</figcaption>
+      </figure>
+      <p>Stress and temperature identify the conditions under which each simulation was run. They change the location and shape of the rate curve, so the model receives both values alongside each two-dimensional point and flow time. The next figure shows how the curves vary across the full set of conditions.</p>
+      <figure class="wide">
+        <img src="fm-project-2/figures/g91_all_curves.png" alt="Two plots of the same 110 creep-rate histories, colored by temperature on the left and stress on the right.">
+        <figcaption>Figure 9. The same 110 histories on shared axes, colored by temperature (left) and applied stress (right). Different conditions produce different rate curves.</figcaption>
+      </figure>
+      <p>To prepare a balanced point cloud, I used 200 equally spaced log-time locations per curve and interpolated its log strain rate. I kept only positive rates from the constant-stress hold, strictly after each run's loading ramp. This gives 22,000 target points.</p>
+
+      <h4>Training the conditional velocity model</h4>
+      <p>I split the 110 complete simulation curves into 82 training, 14 validation, and 14 test curves. The model receives the current two-dimensional point, flow time, stress, and temperature (five inputs) and predicts a two-dimensional velocity. It has three hidden layers of width 128 with SiLU activations (34,050 parameters). I used random Gaussian source points and straight training pairs as in Part 1.</p>
+      <figure>
+        <img src="fm-project-2/figures/g91_training_loss.png" alt="Training and held-out velocity mean squared error decrease over 6000 steps.">
+        <figcaption>Figure 10. Velocity prediction loss. Validation mean squared error fell from 2.043 after step 1 to 0.977 after step 6,000.</figcaption>
+      </figure>
+
+      <h4>Results at new stress and temperature conditions</h4>
+      <p>For each test stress–temperature condition below, I sampled 1,500 fresh Gaussian points and advanced them through the learned field with 50 forward Euler steps.</p>
+      <figure>
+        <img src="fm-project-2/figures/g91_heldout_clouds.png" alt="Orange simulation curves overlaid on blue generated point clouds for three untouched test stresses and temperatures.">
+        <figcaption>Figure 11. Simulation curves (orange) overlaid on newly generated point clouds (blue) at three test conditions.</figcaption>
+      </figure>
+      <p>The flow model reproduces the broad decline and late rise, but some areas of the prediction are more broadly dispersed, indicating greater uncertainty in this part of the curve.</p>
+
+      <h3>Task 2: Animate the learned transport</h3>
+      <p>For a given test condition I tracked the sampled noise through 50 Euler steps. Each scatter point's color is assigned from its generated endpoint's log elapsed time.</p>
+      <figure class="animation">
+        <img src="fm-project-2/figures/g91_transport.gif" alt="Animated colored particles moving from Gaussian noise toward a black simulation creep-rate curve.">
+        <figcaption>Figure 12. Conditional transport from Gaussian noise toward the creep curve based on stress and temperature condition. The black line is the true simulation curve, shown as a reference behind the moving points.</figcaption>
+      </figure>
+      <figure class="wide">
+        <img src="fm-project-2/figures/g91_transport_stills.png" alt="Five still frames from the transport animation with the black simulation curve behind the colored particles.">
+        <figcaption>Figure 13. Representative frames from the same trajectories at flow times 0, 0.24, 0.50, 0.76, and 1.00. The black curve is the true creep curve from the simulation.</figcaption>
+      </figure>
+
+      <h3>Task 3: Investigate the sampling trade-off</h3>
+      <p>I held the trained weights and the Gaussian points fixed while comparing 1, 5, 10, 25, and 50 Euler steps at three test conditions.</p>
+      <p>To quantify the accuracy of the predictions, I used a 17 × 13 grid with an x range of log<sub>10</sub> time from 0 to 8.5 and y range of log<sub>10</sub> rate from −9.5 to −3.0. Histogram total variation (TV) is reported as half the sum of absolute differences between the normalized generated and target bin counts; zero means identical histograms on this grid. No predicted distributions had points outside this histogram grid.</p>
+      <figure class="wide">
+        <img src="fm-project-2/figures/g91_step_clouds.png" alt="Generated clouds at five Euler step counts against the same simulation curve.">
+        <figcaption>Figure 14. Final generated clouds at a test condition with the simulation curve in orange. The one-step update collapses the cloud near the center as most points are initially sent inwards; finer integration recovers the curve.</figcaption>
+      </figure>
+      <figure>
+        <img src="fm-project-2/figures/g91_step_tradeoff.png" alt="Sampling time rises with Euler steps while mean histogram discrepancy falls and then levels off.">
+        <figcaption>Figure 15. Mean sampling time and mean histogram TV across the three test conditions. The quality change from 25 to 50 steps is small compared with the added inference cost.</figcaption>
+      </figure>
+      <p>Few steps introduce substantial numerical integration error, especially at one step. From 25 to 50 steps, TV changes only from 0.132 to 0.130 while measured time rises from 36.9 to 75.9 ms. The remaining error for Euler steps of 25 and above may be improved with a larger neural network, which would also increase the cost of calculating the trajectories. The grid-based histogram metric may also be too coarse to accurately measure smaller errors, and a finer grid would likely be required to capture smaller errors.</p>
+    </section>
+
+    <section>
+      <h2>Part 3: Does Reflow Straighten the Paths?</h2>
+      <h3>Task 1: State a hypothesis and construct a reflow dataset</h3>
+      <p><strong>Hypothesis.</strong> A second model trained on the baseline's own source-to-endpoint pairs will follow straighter paths and reach a similar target distribution with fewer Euler steps. I froze the baseline model from Part 2. For each of the 82 training conditions, I drew 200 new Gaussian source points and advanced each through the baseline with 100 Euler steps. I saved every source together with <em>its own</em> generated endpoint and the associated stress and temperature: 16,400 training pairs. I made 2,800 analogous pairs from the 14 validation conditions for loss monitoring. The 14 test conditions remained untouched. Pair generation took 2.0 seconds on the CPU.</p>
+      <h3>Task 2: Train and compare a reflow model</h3>
+      <p>I trained one reflow model with the same five-input, two-output architecture as the baseline. For each saved pair, the training location is (1 − t)x<sub>0</sub> + tx<sub>1</sub> and the velocity target is x<sub>1</sub> − x<sub>0</sub>. The paired endpoints were never shuffled or replaced by the simulation target. The reflow model used Adam, learning rate 0.001, batch size 256, seed 31, and 6,000 steps. Training took 14.2 seconds.</p>
+
+      <h4>Comparison on test conditions</h4>
+      <p>For each of the 14 test conditions, I used the same 1,000 fresh Gaussian points for the baseline and reflow models. I compared 1, 5, 10, 25, and 50 Euler steps. For each condition, an independent sample of 1,000 target points came from its interpolated simulation curve. Histogram TV uses the same 17 × 13 grid and outside bin as Part 2. Figure 17 shows means over the 14 conditions.</p>
+      <figure class="wide">
+        <img src="fm-project-2/figures/g91_reflow_clouds.png" alt="Baseline and reflow point clouds at one, five, and fifty steps, overlaid on the same held-out simulation curve.">
+        <figcaption>Figure 16. Baseline and reflow models at 1, 5, and 50 steps for one test condition. Dots are generated points; the black line is the simulation target. The initial particles are identical across panels.</figcaption>
+      </figure>
+      <figure>
+        <img src="fm-project-2/figures/g91_reflow_tradeoff.png" alt="Mean target histogram discrepancy and inference time versus Euler steps for baseline and reflow models.">
+        <figcaption>Figure 17. Quality and inference cost averaged over all 14 test conditions. Reflow greatly improves one-step quality.</figcaption>
+      </figure>
+
+      <h4>Are the paths actually straighter?</h4>
+      <p>I sampled each model on the same fine 100-step grid and measured, in standardized model coordinates, each particle's traveled path length minus the straight-line distance between its start and end. A perfectly straight path has an excess of zero. The mean excess across 1,000 particles and all 14 test conditions was <strong>0.2005</strong> for the baseline and <strong>0.0005</strong> for reflow. Therefore, the reflow model is significantly straighter than the baseline model.</p>
+      <figure class="wide">
+        <img src="fm-project-2/figures/g91_reflow_paths.png" alt="Twelve paths from the same Gaussian starting points for baseline and reflow models; baseline paths bend and reflow paths are nearly straight.">
+        <figcaption>Figure 18. Twelve trajectories from the same source particles at one test condition, drawn with a common 100-step grid. Black dots mark starts. Coordinates are mapped back to the plot scale for display; the straightness calculation uses standardized model coordinates.</figcaption>
+      </figure>
+      <h3>Task 3: Analyze what the evidence supports</h3>
+      <p>The results support the path-straightening part of the hypothesis across 14 test conditions. Reflow reaches mean TV 0.158 with five steps, close to the baseline's 0.156 with 50, at about one-eleventh the measured inference time (4.9 versus 53.4 ms for 1,000 points per condition). One-step reflow is also much better than one-step baseline, though its mean TV 0.173 still exceeds the baseline's 50-step value. At 50 steps, reflow does not improve on the baseline's target TV. This is consistent with reflow learning endpoints generated by the baseline, including their errors, meaning it the reflow model cannot perform better than the baseline, it can only be more efficient.</p>
+    </section>
+  </main>
+</body>
+</html>
